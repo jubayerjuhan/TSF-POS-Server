@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
+import ErrorHandler from "../middlewareS/error/errorHandler.js";
 
 const userSchema = new mongoose.Schema({
   firstName: {
@@ -17,6 +18,7 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
+    select: false,
     required: [true, "Password is required"],
   },
   role: {
@@ -50,6 +52,11 @@ userSchema.pre("save", async function (next) {
   this.password = await bcrypt.hash(this.password, salt);
   next();
 });
+
+// password comparison middleware for user
+userSchema.methods.comparePassword = async function (password, hashedPassword) {
+  return await bcrypt.compare(password, hashedPassword);
+};
 const User = mongoose.model("User", userSchema);
 
 export default User;

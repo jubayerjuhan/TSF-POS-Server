@@ -8,6 +8,7 @@ import errorCatcherMiddleWare from "./middlewareS/error/errorCatcher.js";
 import ErrorHandler from "./middlewareS/error/errorHandler.js";
 //Importing Routes Here
 import userRoutes from "./routes/userRoutes.js";
+import authRoutes from "./routes/authRoutes.js";
 
 // importing environment variables
 import "dotenv/config";
@@ -26,6 +27,7 @@ app.get("/", (req, res, next) => {
 
 // Routes
 app.use("/user", userRoutes);
+app.use("/auth", authRoutes);
 
 // Start the server
 app.listen(process.env.PORT, () => {
