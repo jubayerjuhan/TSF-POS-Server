@@ -27,6 +27,17 @@ const userSchema = new mongoose.Schema({
     },
     default: "moderator",
   },
+
+  branch: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Branch",
+    required: [
+      function () {
+        return this.role !== "admin";
+      },
+      "Branch Is Required",
+    ],
+  },
 });
 
 // Define a pre-save middleware function to hash the password before saving
