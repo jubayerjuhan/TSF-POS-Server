@@ -5,7 +5,7 @@ import bodyParser from "body-parser";
 import connectDb from "./db/index.js";
 // Error Handler and Catcher
 import errorCatcherMiddleWare from "./middlewareS/error/errorCatcher.js";
-import ErrorHandler from "./middlewareS/error/errorHandler.js";
+import ErrorHandler from "./middlewares/error/errorHandler.js";
 //Importing Routes Here
 import userRoutes from "./routes/userRoutes.js";
 import authRoutes from "./routes/authRoutes.js";

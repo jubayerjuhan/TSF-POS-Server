@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
-import ErrorHandler from "../middlewareS/error/errorHandler.js";
 
 const userSchema = new mongoose.Schema({
   firstName: {
