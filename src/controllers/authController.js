@@ -24,5 +24,5 @@ export const userLogin = catchAsyncError(async (req, res, next) => {
     return next(new ErrorHandler(403, "Password Doesn't Match"));
 
   // if everything okay send the jwt token to user and login
-  sendJWTToken(user);
+  sendJWTToken(res, user);
 });
