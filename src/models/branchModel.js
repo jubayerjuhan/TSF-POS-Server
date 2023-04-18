@@ -3,12 +3,13 @@ import mongoose from "mongoose";
 const branchSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true,
+    required: [true, "Name is required"],
     trim: true,
+    unique: [true, "There Is Another Branch With This Name"],
   },
   address: {
     type: String,
-    required: true,
+    required: [true, "Address is required"],
     trim: true,
   },
   products: {
@@ -20,10 +21,13 @@ const branchSchema = new mongoose.Schema({
     ],
     default: [],
   },
-  moderator: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-    required: true,
+  moderators: {
+    type: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
   },
 });
 

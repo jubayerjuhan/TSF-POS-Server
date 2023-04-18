@@ -9,6 +9,7 @@ import ErrorHandler from "./middlewares/error/errorHandler.js";
 //Importing Routes Here
 import userRoutes from "./routes/userRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
+import branchRoutes from "./routes/branchRoutes.js";
 
 // importing environment variables
 import "dotenv/config";
@@ -28,6 +29,7 @@ app.get("/", (req, res, next) => {
 // Routes
 app.use("/user", userRoutes);
 app.use("/auth", authRoutes);
+app.use("/branch", branchRoutes);
 
 // Start the server
 app.listen(process.env.PORT, () => {
