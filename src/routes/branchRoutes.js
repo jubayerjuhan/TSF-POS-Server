@@ -4,6 +4,7 @@ import express from "express";
 import {
   createBranch,
   deleteBranch,
+  editBranch,
 } from "../controllers/branch/branchController.js";
 // branch - moderator - controller function
 import {
@@ -23,7 +24,8 @@ const router = express.Router();
 router.route("/create").post(verifyAdmin, createBranch);
 
 // update and delete branch
-router.route("/delete/:branchId").delete(verifyAdmin, deleteBranch);
+router.route("/action/:branchId").put(verifyAdmin, editBranch);
+router.route("/action/:branchId").delete(verifyAdmin, deleteBranch);
 
 // moderator CRUD routes to the branch
 router
