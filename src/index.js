@@ -13,6 +13,7 @@ import branchRoutes from "./routes/branchRoutes.js";
 
 // importing environment variables
 import "dotenv/config";
+import { productUpload } from "./middlewares/multer/multerConfig.js";
 const app = express();
 
 // connecting databse with app
@@ -30,6 +31,11 @@ app.get("/", (req, res, next) => {
 app.use("/user", userRoutes);
 app.use("/auth", authRoutes);
 app.use("/branch", branchRoutes);
+
+// test router
+app.post("/upload-photo", productUpload.single("photo"), (req, res, next) => {
+  console.log(req.file);
+});
 
 // Start the server
 app.listen(process.env.PORT, () => {
