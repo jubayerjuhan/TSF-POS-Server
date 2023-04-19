@@ -1,6 +1,8 @@
 // Core Packages
 import express from "express";
 import bodyParser from "body-parser";
+import path from "path";
+import { fileURLToPath } from "url";
 // Database Connection Func
 import connectDb from "./db/index.js";
 // Error Handler and Catcher
@@ -21,6 +23,11 @@ connectDb();
 
 // Parse incoming requests with JSON payloads
 app.use(bodyParser.json());
+
+// getting uploaded image from images folder on server
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+app.use("/images", express.static(path.join(__dirname, "images")));
 
 // Define your routes
 app.get("/", (req, res, next) => {
