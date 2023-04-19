@@ -53,3 +53,43 @@ export const deleteProduct = catchAsyncError(async (req, res, next) => {
     message: "Product Deleted!",
   });
 });
+
+// controller function to update the product
+export const editProduct = catchAsyncError(async (req, res, next) => {
+  const { id } = req.params;
+
+  // searching for product with the req id
+  const product = await Product.findById(id);
+
+  // sending error if there is no product with the id
+  if (!product)
+    return next(new ErrorHandler(400, "No Product Found With This Id"));
+
+  /**
+   * Making the photo variable undefined because if user don't pass the
+   * photo with req it don't get erased or replaced with and empty string ""
+   */
+  let photo = undefined;
+
+  /**
+   * if the req has a photo / file remove previous photo from server and store new photo on
+   * photo variable
+   */
+
+  if (req.file) {
+    const photoUrl = product.photo.split("/products/")[1];
+    deleteFile("products", photoUrl);
+    photo = fileUrlParser(req.file);
+  }
+
+  // update the product and send back the updated product
+  const updatedProduct = await Product.findByIdAndUpdate(
+    id,
+    { ...req.body, photo },
+    { new: true }
+  );
+  res.status(200).json({
+    success: true,
+    product: updatedProduct,
+  });
+});
