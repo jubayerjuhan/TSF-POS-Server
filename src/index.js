@@ -12,6 +12,7 @@ import ErrorHandler from "./middlewares/error/errorHandler.js";
 import userRoutes from "./routes/userRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import branchRoutes from "./routes/branchRoutes.js";
+import productRoutes from "./routes/productRoutes.js";
 
 // importing environment variables
 import "dotenv/config";
@@ -38,6 +39,7 @@ app.get("/", (req, res, next) => {
 app.use("/user", userRoutes);
 app.use("/auth", authRoutes);
 app.use("/branch", branchRoutes);
+app.use("/product", productRoutes);
 
 // test router
 app.post("/upload-photo", productUpload.single("photo"), (req, res, next) => {
