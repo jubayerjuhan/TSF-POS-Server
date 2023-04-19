@@ -28,3 +28,28 @@ export const createProduct = catchAsyncError(async (req, res, next) => {
     product,
   });
 });
+
+// Controller function to delete product
+export const deleteProduct = catchAsyncError(async (req, res, next) => {
+  const { id } = req.params;
+
+  // throwing error if there is no product id
+  if (!id) return next(new ErrorHandler(400, "Product Id Required"));
+
+  // getting the product first from the database to get image url
+  const product = await Product.findById(id);
+  // parsing the photoUrl
+  const photoUrl = product.photo.split("/products/")[1];
+
+  // deleting the product photo from server
+  deleteFile("products", photoUrl);
+
+  // deleting the product
+  await Product.findByIdAndDelete(id);
+
+  // sending response back to client
+  res.status(200).json({
+    success: true,
+    message: "Product Deleted!",
+  });
+});

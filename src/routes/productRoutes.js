@@ -1,7 +1,10 @@
 import express from "express";
 
 // importing controller function
-import { createProduct } from "../controllers/productController.js";
+import {
+  createProduct,
+  deleteProduct,
+} from "../controllers/productController.js";
 
 // importing the verification function
 import verifyAdmin from "../middlewares/verification/verifyAdmin.js";
@@ -17,5 +20,7 @@ router
   .route("/create")
   .post(verifyAdmin, productUpload.single("photo"), createProduct);
 
+// delete and update product
+router.route("/action/:id").delete(verifyAdmin, deleteProduct);
 // Export the router object so that it can be used in other modules
 export default router;
