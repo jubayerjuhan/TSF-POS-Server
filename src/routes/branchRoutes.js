@@ -12,6 +12,9 @@ import {
   deleteModeratorFromBranch,
 } from "../controllers/branch/branchModeratorController.js";
 
+// branch - product - controller function
+import { addProductToBranch } from "../controllers/branch/branchProductController.js";
+
 // importing the verification function
 import verifyAdmin from "../middlewares/verification/verifyAdmin.js";
 
@@ -29,11 +32,15 @@ router
   .put(verifyAdmin, editBranch)
   .delete(verifyAdmin, deleteBranch);
 
-// moderator CRUD routes to the branch
+// moderator add or delete routes to the branch
 router
   .route("/moderator/:branchId")
   .post(verifyAdmin, addModeratorsToBranch)
   .delete(verifyAdmin, deleteModeratorFromBranch);
+
+// product add or delete routes to the branch
+router.route("/product/:branchId").post(verifyAdmin, addProductToBranch);
+// .delete(verifyAdmin, deleteModeratorFromBranch);
 
 // Export the router object so that it can be used in other modules
 export default router;

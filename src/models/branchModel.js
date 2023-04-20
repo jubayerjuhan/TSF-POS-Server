@@ -15,8 +15,10 @@ const branchSchema = new mongoose.Schema({
   products: {
     type: [
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Product",
+        id: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
+        quantity: {
+          type: Number,
+        },
       },
     ],
     default: [],
