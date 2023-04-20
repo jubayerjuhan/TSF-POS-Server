@@ -35,3 +35,39 @@ export const addProductToBranch = catchAsyncError(async (req, res, next) => {
     branch,
   });
 });
+
+// Controller function to delete a product from branch
+export const deleteProductFromBranch = catchAsyncError(
+  async (req, res, next) => {
+    // getting branch id from params
+    const { branchId } = req.params;
+
+    // getting product id from request body
+    const { product } = req.body;
+
+    // throwing error if product id is not available
+    if (!product)
+      return res.status(400).json({ message: "Product Id Required" });
+
+    /**
+     * Searching for the branch with the branch id and if
+     * branch available pull the product which match product id
+     * we provided
+     */
+    const branch = await Branch.findByIdAndUpdate(
+      branchId,
+      {
+        $pull: { products: { id: product } },
+      },
+      { new: true }
+    );
+
+    if (!branch) {
+      return res.status(404).json({ message: "Branch not found" });
+    }
+    res.status(200).json({
+      success: true,
+      branch,
+    });
+  }
+);
