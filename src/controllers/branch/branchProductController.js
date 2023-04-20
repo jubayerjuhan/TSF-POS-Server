@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import ErrorHandler from "../../middlewares/error/errorHandler.js";
 import Branch from "../../models/branchModel.js";
 import catchAsyncError from "../../utils/catchAsyncError.js";
@@ -96,3 +97,71 @@ export const changeProductQuantity = catchAsyncError(async (req, res, next) => {
     message: "Stock Updated",
   });
 });
+
+export const moveProductBetweenBranches = catchAsyncError(
+  async (req, res, next) => {
+    const { fromBranchId, toBranchId, quantity } = req.body;
+    const { productId } = req.params;
+
+    const fromBranch = await Branch.findById(fromBranchId);
+    const toBranch = await Branch.findById(toBranchId);
+
+    if (!fromBranch || !toBranch)
+      return next(new ErrorHandler(400, "Branch Id's are not valid"));
+
+    // Check if the product exists in fromBranch
+    const product = fromBranch.products.find(
+      (p) => p.id.toString() === productId
+    );
+
+    // if product doesn't exist with that id send error
+    if (!product) {
+      throw new Error(
+        `Product with id ${productId} not found in ${fromBranch.name}`
+      );
+    }
+
+    // Check if the requested quantity is valid
+    if (quantity > product.quantity) {
+      throw new Error(
+        `Requested quantity ${quantity} is greater than the available quantity ${product.quantity}`
+      );
+    }
+
+    // Decrease the quantity of the product in fromBranch and increase the quantity in toBranch
+    const updatedFromBranch = await Branch.findByIdAndUpdate(
+      fromBranchId,
+      { $inc: { "products.$[product].quantity": -quantity } },
+      {
+        arrayFilters: [
+          { "product.id": new mongoose.Types.ObjectId(productId) },
+        ],
+        new: true,
+      }
+    );
+
+    // update to branch with new product and quantity
+    const updatedToBranch = await Branch.findOneAndUpdate(
+      { _id: toBranchId, "products.id": productId },
+      { $inc: { "products.$.quantity": quantity } },
+      { new: true }
+    );
+
+    if (!updatedToBranch) {
+      // if the toBranch branch already has the product just update the quantity
+      const newToBranch = await Branch.findByIdAndUpdate(
+        toBranchId,
+        {
+          $addToSet: { products: { id: productId, quantity: quantity } },
+        },
+        { new: true }
+      );
+    }
+
+    // sending the response back to client
+    res.status(200).json({
+      success: true,
+      message: `Dispatched ${quantity} Items From ${fromBranch.name} Branch to ${toBranch.name}`,
+    });
+  }
+);

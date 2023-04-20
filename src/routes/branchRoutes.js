@@ -17,6 +17,7 @@ import {
   addProductToBranch,
   changeProductQuantity,
   deleteProductFromBranch,
+  moveProductBetweenBranches,
 } from "../controllers/branch/branchProductController.js";
 
 // importing the verification function
@@ -49,5 +50,9 @@ router
   .delete(verifyAdmin, deleteProductFromBranch)
   .put(verifyAdmin, changeProductQuantity);
 
+// move product between branches
+router
+  .route("/move-product/:productId")
+  .post(verifyAdmin, moveProductBetweenBranches);
 // Export the router object so that it can be used in other modules
 export default router;
