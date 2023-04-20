@@ -15,6 +15,7 @@ import {
 // branch - product - controller function
 import {
   addProductToBranch,
+  changeProductQuantity,
   deleteProductFromBranch,
 } from "../controllers/branch/branchProductController.js";
 
@@ -45,8 +46,8 @@ router
 router
   .route("/product/:branchId")
   .post(verifyAdmin, addProductToBranch)
-  .delete(verifyAdmin, deleteProductFromBranch);
-// .delete(verifyAdmin, deleteModeratorFromBranch);
+  .delete(verifyAdmin, deleteProductFromBranch)
+  .put(verifyAdmin, changeProductQuantity);
 
 // Export the router object so that it can be used in other modules
 export default router;

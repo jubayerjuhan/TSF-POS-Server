@@ -71,3 +71,28 @@ export const deleteProductFromBranch = catchAsyncError(
     });
   }
 );
+
+export const changeProductQuantity = catchAsyncError(async (req, res, next) => {
+  const { branchId } = req.params;
+  const { product, quantity } = req.body;
+
+  //  throwing error if product id or quantity isn't available
+  if (!product || !quantity)
+    return next(new ErrorHandler("Product id and quantity required"));
+
+  // updating the product quantity on branch.products = [] array
+  const branch = await Branch.updateOne(
+    { _id: branchId, "products.id": product },
+    { $set: { "products.$.quantity": quantity } }
+  );
+
+  //   if product count is same as previous throwing error
+  if (branch.modifiedCount === 0)
+    return next(new ErrorHandler(400, "Can't update product stock"));
+
+  // sending response back to client
+  res.status(200).json({
+    success: true,
+    message: "Stock Updated",
+  });
+});
