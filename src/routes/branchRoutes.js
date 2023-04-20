@@ -24,12 +24,14 @@ const router = express.Router();
 router.route("/create").post(verifyAdmin, createBranch);
 
 // update and delete branch
-router.route("/action/:branchId").put(verifyAdmin, editBranch);
-router.route("/action/:branchId").delete(verifyAdmin, deleteBranch);
+router
+  .route("/action/:branchId")
+  .put(verifyAdmin, editBranch)
+  .delete(verifyAdmin, deleteBranch);
 
 // moderator CRUD routes to the branch
 router
-  .route("/add-moderator/:branchId")
+  .route("/moderator/:branchId")
   .post(verifyAdmin, addModeratorsToBranch)
   .delete(verifyAdmin, deleteModeratorFromBranch);
 

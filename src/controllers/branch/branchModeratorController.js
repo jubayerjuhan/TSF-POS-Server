@@ -29,6 +29,10 @@ export const addModeratorsToBranch = catchAsyncError(async (req, res, next) => {
     { new: true }
   );
 
+  // If There is no branch with the id throw a error
+  if (!branch)
+    return next(new ErrorHandler(404, "No Branch Found With That Id"));
+
   /**
    * sending the response
    */
