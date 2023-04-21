@@ -5,6 +5,7 @@ import {
   createBranch,
   deleteBranch,
   editBranch,
+  getBranchInformation,
 } from "../controllers/branch/branchController.js";
 // branch - moderator - controller function
 import {
@@ -34,6 +35,7 @@ router.route("/create").post(verifyAdmin, createBranch);
 // update and delete branch
 router
   .route("/action/:branchId")
+  .get(verifyAdmin, getBranchInformation)
   .put(verifyAdmin, editBranch)
   .delete(verifyAdmin, deleteBranch);
 

@@ -62,3 +62,23 @@ export const editBranch = catchAsyncError(async (req, res, next) => {
     message: "Branch Information Edited",
   });
 });
+
+// Controller function to get branch information
+export const getBranchInformation = catchAsyncError(async (req, res, next) => {
+  //extracting branchId from request
+  const { branchId } = req.params;
+
+  // throwing error if there is no branch id
+  if (!branchId) return next(new ErrorHandler(400, "Branch Id Required"));
+
+  // getting branch with products and moderators populated
+  const branch = await Branch.findById(branchId).populate(
+    "products.id moderators"
+  );
+
+  // sending response back to server
+  res.status(200).json({
+    success: true,
+    branch,
+  });
+});

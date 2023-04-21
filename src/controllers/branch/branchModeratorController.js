@@ -1,5 +1,6 @@
 import ErrorHandler from "../../middlewares/error/errorHandler.js";
 import Branch from "../../models/branchModel.js";
+import User from "../../models/userModel.js";
 import catchAsyncError from "../../utils/catchAsyncError.js";
 
 // adding new moderators to the branch
@@ -20,6 +21,10 @@ export const addModeratorsToBranch = catchAsyncError(async (req, res, next) => {
    * searching branch with the branch id and
    * pushing the moderator id in moderators array of branch
    */
+
+  const moderator = await User.findOne({ _id: moderatorId, role: "moderator" });
+  if (!moderator)
+    return next(new ErrorHandler(404, "No moderator found with the id"));
 
   const branch = await Branch.findByIdAndUpdate(
     branchId,
