@@ -23,6 +23,7 @@ import {
 
 // importing the verification function
 import verifyAdmin from "../middlewares/verification/verifyAdmin.js";
+import verifyModerator from "../middlewares/verification/verifyModerator.js";
 
 // Create a new router instance
 const router = express.Router();
@@ -35,7 +36,7 @@ router.route("/create").post(verifyAdmin, createBranch);
 // update and delete branch
 router
   .route("/action/:branchId")
-  .get(verifyAdmin, getBranchInformation)
+  .get(verifyModerator, getBranchInformation)
   .put(verifyAdmin, editBranch)
   .delete(verifyAdmin, deleteBranch);
 
