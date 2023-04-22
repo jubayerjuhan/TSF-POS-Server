@@ -57,3 +57,36 @@ export const forgotPassword = catchAsyncError(async (req, res, next) => {
     message: "Password Reset Link Sent To Your Email",
   });
 });
+
+// Controller function to reset password
+export const resetPassword = catchAsyncError(async (req, res, next) => {
+  const { token } = req.params;
+  const { password } = req.body;
+
+  // Throwing error if new password isn't attached to body
+  if (!password)
+    return next(
+      new ErrorHandler(400, "New password required to reset old password")
+    );
+
+  const user = await User.findOne({ "passwordReset.token": token });
+
+  // Throwing error if new no user matched with the token
+  if (!user) return next(new ErrorHandler(403, "Reset password link invalid"));
+
+  // If Password reset link expired send error
+  if (user.passwordReset.expiry < Date.now())
+    return next(new ErrorHandler(403, "Reset password link expired"));
+
+  // adding new password as main password
+  user.password = password;
+  user.passwordReset = undefined;
+
+  // saving the user with new password and destroyed password reset object
+  await user.save();
+
+  res.status(200).json({
+    success: true,
+    message: "Password reset successful",
+  });
+});
