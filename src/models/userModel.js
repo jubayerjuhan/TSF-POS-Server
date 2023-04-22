@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
+import crypto from "crypto";
 
 const userSchema = new mongoose.Schema({
   firstName: {
@@ -19,6 +20,14 @@ const userSchema = new mongoose.Schema({
     type: String,
     select: false,
     required: [true, "Password is required"],
+  },
+  passwordReset: {
+    token: {
+      type: String,
+    },
+    expiry: {
+      type: Date,
+    },
   },
   role: {
     type: String,
@@ -51,6 +60,14 @@ userSchema.pre("save", async function (next) {
   this.password = await bcrypt.hash(this.password, salt);
   next();
 });
+
+// add resetPassword password token and send token with email
+
+userSchema.methods.sendResetPasswordToken = async function (next) {
+  this.passwordReset.token = crypto.randomBytes(20).toString("hex");
+  this.passwordReset = Date.now() + 3600000; // Expires in 1 hour
+  next();
+};
 
 // password comparison middleware for user
 userSchema.methods.comparePassword = async function (password, hashedPassword) {

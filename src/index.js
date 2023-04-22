@@ -17,6 +17,7 @@ import productRoutes from "./routes/productRoutes.js";
 // importing environment variables
 import "dotenv/config";
 import { productUpload } from "./middlewares/multer/multerConfig.js";
+import sendEmail from "./utils/email/email.js";
 const app = express();
 
 // connecting databse with app
@@ -31,7 +32,7 @@ const __dirname = path.dirname(__filename);
 app.use("/images", express.static(path.join(__dirname, "images")));
 
 // Define your routes
-app.get("/", (req, res, next) => {
+app.get("/", async (req, res, next) => {
   return next(new ErrorHandler(404, "Hello this is a error"));
 });
 
