@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import ErrorHandler from "../../middlewares/error/errorHandler.js";
+import ErrorHandler from "../error/errorHandler.js";
 import User from "../../models/userModel.js";
 
 /**
@@ -17,7 +17,7 @@ where admin and moderators both can access
 
 const acceptedRoles = ["admin", "moderator"];
 
-const verifyModerator = async (req, res, next) => {
+const verifyAdminAndModerator = async (req, res, next) => {
   // extracting the token from request header
   const token = req.headers.authorization?.split(" ")[1];
   if (!token) {
@@ -46,4 +46,4 @@ const verifyModerator = async (req, res, next) => {
   }
 };
 
-export default verifyModerator;
+export default verifyAdminAndModerator;

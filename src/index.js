@@ -13,6 +13,7 @@ import userRoutes from "./routes/userRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import branchRoutes from "./routes/branchRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
+import saleRoutes from "./routes/saleRoutes.js";
 
 // importing environment variables
 import "dotenv/config";
@@ -41,6 +42,7 @@ app.use("/user", userRoutes);
 app.use("/auth", authRoutes);
 app.use("/branch", branchRoutes);
 app.use("/product", productRoutes);
+app.use("/sale", saleRoutes);
 
 // test router
 app.post("/upload-photo", productUpload.single("photo"), (req, res, next) => {

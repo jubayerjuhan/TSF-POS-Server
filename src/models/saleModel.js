@@ -46,7 +46,12 @@ const saleSchema = new mongoose.Schema(
     },
     partialPaymentAmount: {
       type: Number,
-      default: 0,
+      required: [
+        function () {
+          return this.partialPayment;
+        },
+        "Partial Payment Amount Required",
+      ],
     },
     tax: {
       type: Number,
