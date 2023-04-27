@@ -3,12 +3,16 @@ export const mongoErrorCatcher = (err, errorMessage) => {
     // if the error type is mongo db validation error
     case "ValidationError":
       errorMessage = ``;
-      for (const field in err.errors) {
-        errorMessage += `${err.errors[field].message}, `;
+      const fields = Object.keys(err.errors);
+      for (let i = 0; i < fields.length; i++) {
+        const isLastField = i === fields.length - 1;
+        errorMessage += `${err.errors[fields[i]].message}${
+          isLastField ? "" : ", "
+        }`;
       }
       return errorMessage;
 
-    // if there is duplicate key error
+    // if there is duplicate key error c;,\]P,
     case "MongoServerError":
       errorMessage = ``;
 

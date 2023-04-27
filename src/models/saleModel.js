@@ -12,7 +12,7 @@ const saleSchema = new mongoose.Schema(
     },
     total: {
       type: Number,
-      required: true,
+      required: [true, "Total Is Required"],
     },
     discount: {
       type: Number,
@@ -42,7 +42,7 @@ const saleSchema = new mongoose.Schema(
     },
     partialPayment: {
       type: Boolean,
-      required: true,
+      required: [true, "Partial Payment Status Is Required"],
     },
     partialPaymentAmount: {
       type: Number,
