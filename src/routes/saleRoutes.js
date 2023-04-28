@@ -4,6 +4,7 @@ import express from "express";
 import {
   deleteSale,
   getSale,
+  getSales,
   makeSale,
 } from "../controllers/saleController.js";
 
@@ -15,6 +16,7 @@ const router = express.Router();
 
 // Defineing all sale routes here
 router.route("/add").post(verifyAdminAndModerator, makeSale);
+router.route("/list").get(verifyAdminAndModerator, getSales);
 router
   .route("/action/:id")
   .get(verifyAdminAndModerator, getSale)

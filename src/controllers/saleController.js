@@ -51,3 +51,32 @@ export const getSale = catchAsyncError(async (req, res, next) => {
     sale,
   });
 });
+
+// controller function to get sales from one date to another
+export const getSales = catchAsyncError(async (req, res, next) => {
+  // getting the dates from body
+  const { date } = req.body;
+
+  // defining an empty array
+  let allSales = [];
+
+  /**
+   * if date is available then find with date, if not available
+   * then find without anything
+   */
+  if (!date) {
+    const sales = await Sale.find().sort({ createdAt: -1 });
+    allSales = sales;
+  } else {
+    const dateSales = await Sale.find({
+      createdAt: { $gte: date.startDate, $lte: date.endDate },
+    });
+    allSales = dateSales;
+  }
+
+  // sending response to the server
+  res.status(200).json({
+    success: true,
+    sales: allSales,
+  });
+});
