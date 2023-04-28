@@ -60,6 +60,11 @@ const saleSchema = new mongoose.Schema(
     note: {
       type: String,
     },
+    branch: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Branch",
+      required: [true, "Branch Is Required"],
+    },
   },
   { timestamps: true }
 );
