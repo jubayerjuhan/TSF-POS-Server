@@ -1,4 +1,5 @@
 import ErrorHandler from "../middlewares/error/errorHandler.js";
+import Branch from "../models/branchModel.js";
 import Product from "../models/productModel.js";
 import catchAsyncError from "../utils/catchAsyncError.js";
 import deleteFile from "../utils/files/deleteFile.js";
@@ -91,5 +92,52 @@ export const editProduct = catchAsyncError(async (req, res, next) => {
   res.status(200).json({
     success: true,
     product: updatedProduct,
+  });
+});
+
+// controller function to search product
+export const searchProduct = catchAsyncError(async (req, res, next) => {
+  const { productId } = req.query;
+
+  // searching for product with the custom product id
+  const product = await Product.findOne({ productId });
+
+  // throwing error if product id doesn't matches any any id
+  if (!product)
+    return next(new ErrorHandler(404, "No product found with this id"));
+
+  // searching for branches the product is available
+  const branches = await Branch.aggregate([
+    { $match: { "products.id": product._id } },
+    {
+      $project: {
+        _id: 0,
+        name: 1,
+        quantity: {
+          $arrayElemAt: [
+            {
+              $map: {
+                input: {
+                  $filter: {
+                    input: "$products",
+                    cond: { $eq: ["$$this.id", product._id] },
+                  },
+                },
+                as: "product",
+                in: "$$product.quantity",
+              },
+            },
+            0,
+          ],
+        },
+      },
+    },
+  ]);
+
+  // sending the product and the branchs the product available in
+  res.status(200).json({
+    success: true,
+    product,
+    branches,
   });
 });

@@ -33,7 +33,7 @@ export const addProductToBranch = catchAsyncError(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
-    branch,
+    message: "Product added to branch",
   });
 });
 

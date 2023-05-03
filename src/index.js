@@ -18,7 +18,7 @@ import saleRoutes from "./routes/saleRoutes.js";
 // importing environment variables
 import "dotenv/config";
 import { productUpload } from "./middlewares/multer/multerConfig.js";
-import sendEmail from "./utils/email/email.js";
+// import sendEmail from "./utils/email/email.js";
 const app = express();
 
 // connecting databse with app

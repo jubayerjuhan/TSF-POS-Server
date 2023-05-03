@@ -61,6 +61,9 @@ export const getSales = catchAsyncError(async (req, res, next) => {
   // defining an empty array
   let allSales = [];
 
+  if (req.user.role !== "admin" && !branch)
+    return next(new ErrorHandler(403, "You don't have permission"));
+
   /**
    * if date is available then find with date, if not available
    * then find without anything
