@@ -76,8 +76,8 @@ export const getSales = catchAsyncError(async (req, res, next) => {
           date
             ? {
                 createdAt: {
-                  $gte: new Date(date?.startDate),
-                  $lte: new Date(date?.endDate),
+                  $gte: moment(date?.startDate).startOf("day").toDate(),
+                  $lte: moment(date?.endDate).endOf("day").toDate(),
                 },
               }
             : {},
