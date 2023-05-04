@@ -1,3 +1,4 @@
+import checkModeratorsBranch from "../../helperFunctions/moderators/checkModeratorsBranch.js";
 import ErrorHandler from "../../middlewares/error/errorHandler.js";
 import Branch from "../../models/branchModel.js";
 import User from "../../models/userModel.js";
@@ -26,6 +27,19 @@ export const addModeratorsToBranch = catchAsyncError(async (req, res, next) => {
   if (!moderator)
     return next(new ErrorHandler(404, "No moderator found with the id"));
 
+  /**
+   * Check if the moderation is already added on another branch
+   */
+  const isUserModerator = await checkModeratorsBranch(moderator._id);
+
+  if (isUserModerator.length > 0) {
+    const alradyManagingBranchName = isUserModerator[0].name;
+    return next(
+      new ErrorHandler(400, `User already managing ${alradyManagingBranchName}`)
+    );
+  }
+
+  // adding the user to the branch
   const branch = await Branch.findByIdAndUpdate(
     branchId,
     {

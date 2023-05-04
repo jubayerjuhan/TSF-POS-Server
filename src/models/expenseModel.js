@@ -19,6 +19,16 @@ const expenseSchema = new mongoose.Schema({
       "Employee Name Is Required",
     ],
   },
+  description: {
+    type: String,
+    required: [
+      function () {
+        return this.type === "other";
+      },
+      "Description Name Is Required",
+    ],
+  },
+
   branch: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Branch",
