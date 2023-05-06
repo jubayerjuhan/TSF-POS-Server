@@ -2,6 +2,7 @@
 import express from "express";
 import bodyParser from "body-parser";
 import path from "path";
+import cors from "cors";
 import { fileURLToPath } from "url";
 // Database Connection Func
 import connectDb from "./db/index.js";
@@ -25,6 +26,8 @@ const app = express();
 // connecting databse with app
 connectDb();
 
+// using cors
+app.use(cors());
 // Parse incoming requests with JSON payloads
 app.use(bodyParser.json());
 
