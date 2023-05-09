@@ -13,6 +13,27 @@ export const createUser = catchAsyncError(async (req, res, next) => {
     message: "User Creation Successful!",
   });
 });
+// Creating a user with create function
+export const deleteUser = catchAsyncError(async (req, res, next) => {
+  const userId = req.params.id;
+
+  // Find and delete the user with the given id
+  const user = await User.findByIdAndDelete(userId);
+
+  if (!user) {
+    // If user is not found, return a 404 error
+    return res.status(404).json({
+      success: false,
+      message: "User not found",
+    });
+  }
+
+  // Return a success response if user is deleted successfully
+  res.status(200).json({
+    success: true,
+    message: "User deleted successfully",
+  });
+});
 
 export const getUsersList = catchAsyncError(async (req, res, next) => {
   const users = await User.find();
@@ -34,9 +55,10 @@ export const getUsersList = catchAsyncError(async (req, res, next) => {
     return usersWithBranch.push({ ...user._doc, branch: branchName });
   });
 
-  console.log(usersWithBranch);
-  res.status(200).json({
-    success: true,
-    users: usersWithBranch,
-  });
+  setTimeout(() => {
+    res.status(200).json({
+      success: true,
+      users: usersWithBranch,
+    });
+  }, 5000);
 });

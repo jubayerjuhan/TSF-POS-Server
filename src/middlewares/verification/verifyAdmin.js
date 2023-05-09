@@ -15,6 +15,7 @@ Middleware function to verify if the user is an admin
 const verifyAdmin = async (req, res, next) => {
   // extracting the token from request header
   const token = req.headers.authorization?.split(" ")[1];
+  console.log(token);
   if (!token) {
     // sending error if there is no token
     return next(new ErrorHandler(401, "Authorization failed!"));
