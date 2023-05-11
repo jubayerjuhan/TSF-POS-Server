@@ -7,6 +7,16 @@ export const createUser = catchAsyncError(async (req, res, next) => {
   // creating user on mongo db
   const user = await User.create(req.body);
 
+  if (user.role !== "admin") {
+    await Branch.findByIdAndUpdate(
+      req.body.branch,
+      {
+        $addToSet: { moderators: user._id },
+      },
+      { new: true }
+    );
+  }
+
   // sending success response
   res.status(200).json({
     success: true,
@@ -55,10 +65,8 @@ export const getUsersList = catchAsyncError(async (req, res, next) => {
     return usersWithBranch.push({ ...user._doc, branch: branchName });
   });
 
-  setTimeout(() => {
-    res.status(200).json({
-      success: true,
-      users: usersWithBranch,
-    });
-  }, 5000);
+  res.status(200).json({
+    success: true,
+    users: usersWithBranch,
+  });
 });

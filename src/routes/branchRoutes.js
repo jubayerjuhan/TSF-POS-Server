@@ -5,6 +5,7 @@ import {
   createBranch,
   deleteBranch,
   editBranch,
+  getAllBranches,
   getBranchInformation,
 } from "../controllers/branch/branchController.js";
 // branch - moderator - controller function
@@ -32,6 +33,7 @@ const router = express.Router();
  */
 // create branch
 router.route("/create").post(verifyAdmin, createBranch);
+router.route("/list").get(verifyAdmin, getAllBranches);
 
 // update and delete branch
 router

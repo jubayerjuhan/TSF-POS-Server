@@ -25,6 +25,11 @@ export const mongoErrorCatcher = (err, errorMessage) => {
         return errorMessage;
       }
 
+    case "CastError":
+      const modelType = err.model.modelName;
+      errorMessage = `Id ${err.value} Is Not a Valid ${modelType}`;
+      return errorMessage;
+
     default:
       return errorMessage;
   }

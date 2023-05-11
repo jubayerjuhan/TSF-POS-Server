@@ -82,3 +82,12 @@ export const getBranchInformation = catchAsyncError(async (req, res, next) => {
     branch,
   });
 });
+
+// controller function to get all branches
+export const getAllBranches = catchAsyncError(async (req, res, next) => {
+  const branches = await Branch.find({}).select("name address");
+  res.status(200).json({
+    success: true,
+    branches: branches,
+  });
+});
