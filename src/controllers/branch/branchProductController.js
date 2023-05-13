@@ -44,7 +44,7 @@ export const deleteProductFromBranch = catchAsyncError(
     const { branchId } = req.params;
 
     // getting product id from request body
-    const { product } = req.body;
+    const { product } = req.query;
 
     // throwing error if product id is not available
     if (!product)

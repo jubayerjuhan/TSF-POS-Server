@@ -11,6 +11,7 @@ export const createBranch = catchAsyncError(async (req, res, next) => {
   // Sending response back to client
   res.status(200).json({
     success: true,
+    message: "Branch Created",
     branch,
   });
 });
@@ -25,13 +26,15 @@ export const deleteBranch = catchAsyncError(async (req, res, next) => {
 
   console.log(req.body);
   // deleting a new branch using the request body info
-  await Branch.findByIdAndDelete(branchId);
+  const branch = await Branch.findByIdAndDelete(branchId);
+  if (!branch) return next(new ErrorHandler(404, "No branch found"));
 
-  // Sending response back to client
   res.status(200).json({
     success: true,
     message: "Branch Deleted",
   });
+
+  // Sending response back to client
 });
 
 // Controller Function To Edit Branch Information
@@ -50,11 +53,11 @@ export const editBranch = catchAsyncError(async (req, res, next) => {
     return next(new ErrorHandler(404, "No Branch Found With The Id"));
 
   // throwing error if there is no name or location
-  if (!name && !location)
+  if (!name && !address)
     return next(new ErrorHandler(400, "Name Or Location Required To Edit"));
 
   // deleting a new branch using the request body info
-  await Branch.findByIdAndUpdate(branchId, { name, address });
+  await Branch.findByIdAndUpdate(branchId, req.body);
 
   // Sending response back to client
   res.status(200).json({
@@ -76,7 +79,11 @@ export const getBranchInformation = catchAsyncError(async (req, res, next) => {
     "products.id moderators"
   );
 
+  if (!branch)
+    return next(new ErrorHandler(404, "No Branch Found With This Id"));
+
   // sending response back to server
+
   res.status(200).json({
     success: true,
     branch,

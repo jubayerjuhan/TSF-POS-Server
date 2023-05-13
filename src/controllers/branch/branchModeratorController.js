@@ -67,7 +67,7 @@ export const deleteModeratorFromBranch = catchAsyncError(
     // getting branch id from params
     const { branchId } = req.params;
     // getting branch id from request body
-    const { moderatorId } = req.body;
+    const { moderatorId } = req.query;
 
     // sending error if branch or moderator id is not provided
     if (!branchId || !moderatorId) {
@@ -95,6 +95,7 @@ export const deleteModeratorFromBranch = catchAsyncError(
     res.status(200).json({
       success: true,
       branch,
+      message: "Moderator Deleted",
     });
   }
 );
