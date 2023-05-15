@@ -22,7 +22,7 @@ export const addProductToBranch = catchAsyncError(async (req, res, next) => {
   if (branch) {
     return res
       .status(400)
-      .json({ message: "Product already exists in the branch" });
+      .json({ success: true, message: "Product already exists in the branch" });
   }
 
   await Branch.findByIdAndUpdate(
@@ -69,6 +69,7 @@ export const deleteProductFromBranch = catchAsyncError(
     res.status(200).json({
       success: true,
       branch,
+      message: "Product Deleted From Branch",
     });
   }
 );
@@ -77,9 +78,10 @@ export const changeProductQuantity = catchAsyncError(async (req, res, next) => {
   const { branchId } = req.params;
   const { product, quantity } = req.body;
 
+  console.log(req.body);
   //  throwing error if product id or quantity isn't available
   if (!product || !quantity)
-    return next(new ErrorHandler("Product id and quantity required"));
+    return next(new ErrorHandler(400, "Product id and quantity required"));
 
   // updating the product quantity on branch.products = [] array
   const branch = await Branch.updateOne(

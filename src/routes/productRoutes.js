@@ -5,6 +5,7 @@ import {
   createProduct,
   deleteProduct,
   editProduct,
+  getProductList,
   searchProduct,
 } from "../controllers/productController.js";
 
@@ -23,6 +24,7 @@ router
   .route("/create")
   .post(verifyAdmin, productUpload.single("photo"), createProduct);
 
+router.route("/list").get(verifyAdmin, getProductList);
 // delete and update product
 router
   .route("/action/:id")

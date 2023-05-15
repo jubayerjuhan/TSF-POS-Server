@@ -26,7 +26,17 @@ export const createProduct = catchAsyncError(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
+    message: "Product Added Successfully",
     product,
+  });
+});
+
+// controller function to get all products
+export const getProductList = catchAsyncError(async (req, res, next) => {
+  const products = await Product.find();
+  res.status(200).json({
+    success: true,
+    products,
   });
 });
 
@@ -91,6 +101,7 @@ export const editProduct = catchAsyncError(async (req, res, next) => {
   );
   res.status(200).json({
     success: true,
+    message: "Edit Product Successful",
     product: updatedProduct,
   });
 });
@@ -137,7 +148,6 @@ export const searchProduct = catchAsyncError(async (req, res, next) => {
   // sending the product and the branchs the product available in
   res.status(200).json({
     success: true,
-    product,
-    branches,
+    product: { ...product._doc, branches },
   });
 });
