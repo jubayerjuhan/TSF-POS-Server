@@ -4,6 +4,7 @@ import catchAsyncError from "../utils/catchAsyncError.js";
 // error handler function
 import ErrorHandler from "../middlewares/error/errorHandler.js";
 import mongoose from "mongoose";
+import moment from "moment";
 
 // controller function to add a sale
 export const makeSale = catchAsyncError(async (req, res, next) => {
@@ -52,6 +53,32 @@ export const getSale = catchAsyncError(async (req, res, next) => {
     sale,
   });
 });
+
+// controller function to get one sale document from database
+export const completeSaleWithFullAmount = catchAsyncError(
+  async (req, res, next) => {
+    const { id } = req.params;
+
+    const sale = await Sale.findByIdAndUpdate(
+      id,
+      {
+        partialPayment: false,
+        partialPaymentAmount: 0,
+      },
+      { new: true }
+    );
+
+    // throwing error if no sale with the id available
+    if (!sale)
+      return next(new ErrorHandler(404, "No sale found with this sale id"));
+
+    res.status(200).json({
+      success: true,
+      sale,
+      message: "Sale Marked as Complete",
+    });
+  }
+);
 
 // controller function to get sales from one date to another
 export const getSales = catchAsyncError(async (req, res, next) => {

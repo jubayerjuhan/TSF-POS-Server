@@ -2,6 +2,7 @@ import express from "express";
 
 // import controller functions
 import {
+  completeSaleWithFullAmount,
   deleteSale,
   getSale,
   getSales,
@@ -25,5 +26,9 @@ router
   .route("/action/:id")
   .get(verifyAdminAndModerator, getSale)
   .delete(verifyAdminAndModerator, deleteSale);
+
+router
+  .route("/complete/:id")
+  .put(verifyAdminAndModerator, completeSaleWithFullAmount);
 
 export default router;

@@ -20,9 +20,16 @@ const saleSchema = new mongoose.Schema(
     },
     items: [
       {
-        product: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "Product",
+        name: {
+          type: String,
+          required: true,
+        },
+        photo: {
+          type: String,
+          required: true,
+        },
+        id: {
+          type: Number,
           required: true,
         },
         quantity: {

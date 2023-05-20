@@ -108,6 +108,7 @@ export const moveProductBetweenBranches = catchAsyncError(
     const fromBranch = await Branch.findById(fromBranchId);
     const toBranch = await Branch.findById(toBranchId);
 
+    console.log(fromBranchId, toBranchId, "from and to branch");
     if (!fromBranch || !toBranch)
       return next(new ErrorHandler(400, "Branch Id's are not valid"));
 

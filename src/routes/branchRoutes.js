@@ -33,7 +33,7 @@ const router = express.Router();
  */
 // create branch
 router.route("/create").post(verifyAdmin, createBranch);
-router.route("/list").get(verifyAdmin, getAllBranches);
+router.route("/list").get(verifyAdminAndModerator, getAllBranches);
 
 // update and delete branch
 router
