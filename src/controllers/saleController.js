@@ -126,7 +126,7 @@ export const completeSaleWithFullAmount = catchAsyncError(
 // controller function to get sales from one date to another
 export const getSales = catchAsyncError(async (req, res, next) => {
   // getting the dates from body
-  const { date, branch } = req.body;
+  const { startDate, endDate, branch } = req.query;
 
   // defining an empty array
   let allSales = [];
@@ -138,16 +138,17 @@ export const getSales = catchAsyncError(async (req, res, next) => {
    * if date is available then find with date, if not available
    * then find without anything
    */
+
   const saleInfo = await Sale.aggregate([
     {
       $match: {
         $and: [
           branch ? { branch: new mongoose.Types.ObjectId(branch) } : {},
-          date
+          startDate && endDate
             ? {
                 createdAt: {
-                  $gte: moment(date?.startDate).startOf("day").toDate(),
-                  $lte: moment(date?.endDate).endOf("day").toDate(),
+                  $gte: moment(startDate).startOf("day").toDate(),
+                  $lte: moment(endDate).endOf("day").toDate(),
                 },
               }
             : {},
