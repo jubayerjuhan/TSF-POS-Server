@@ -40,7 +40,10 @@ export const makeSale = catchAsyncError(async (req, res, next) => {
       if (product) {
         // Reduce the quantity of the product in the branch
         if (product.quantity < item.quantity) {
+          // deleting the sale
           await Sale.findByIdAndDelete(sale._id);
+
+          // sending error with message
           return next(
             new ErrorHandler(
               400,
@@ -48,6 +51,8 @@ export const makeSale = catchAsyncError(async (req, res, next) => {
             )
           );
         }
+
+        // reducing the quantity of product
         product.quantity -= item.quantity;
       }
     }
