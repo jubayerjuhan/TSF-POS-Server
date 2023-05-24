@@ -31,7 +31,6 @@ export const makeSale = catchAsyncError(async (req, res, next) => {
 
     for (const item of req.body.items) {
       // Find the product in the branch's products array
-
       const product = branch.products.find((prod) =>
         new mongoose.Types.ObjectId(prod.id).equals(
           new mongoose.Types.ObjectId(item._id)
@@ -40,6 +39,15 @@ export const makeSale = catchAsyncError(async (req, res, next) => {
 
       if (product) {
         // Reduce the quantity of the product in the branch
+        if (product.quantity < item.quantity) {
+          await Sale.findByIdAndDelete(sale._id);
+          return next(
+            new ErrorHandler(
+              400,
+              "Product Quantity Is Greater Than Available Stock"
+            )
+          );
+        }
         product.quantity -= item.quantity;
       }
     }
