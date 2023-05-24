@@ -156,6 +156,14 @@ export const getSales = catchAsyncError(async (req, res, next) => {
       },
     },
     {
+      $lookup: {
+        from: "branches", // Replace with the actual name of the Branch collection
+        localField: "branch",
+        foreignField: "_id",
+        as: "branch",
+      },
+    },
+    {
       $group: {
         _id: null,
         total: {
@@ -227,6 +235,7 @@ export const getSales = catchAsyncError(async (req, res, next) => {
           { name: "bKash", total: "$bKash" },
         ],
         sales: 1,
+        branch: { $arrayElemAt: ["$branch", 0] },
       },
     },
   ]);
@@ -236,7 +245,7 @@ export const getSales = catchAsyncError(async (req, res, next) => {
     success: true,
     saleInfo:
       saleInfo.length !== 0
-        ? saleInfo
+        ? saleInfo[0]
         : {
             total: 0,
             count: 0,
