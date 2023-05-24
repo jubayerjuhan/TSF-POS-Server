@@ -6,23 +6,46 @@ import ErrorHandler from "../middlewares/error/errorHandler.js";
 import mongoose from "mongoose";
 import moment from "moment";
 import generateSaleId from "../helperFunctions/sale/generateSaleId.js";
+import Branch from "../models/branchModel.js";
 
 // controller function to add a sale
 export const makeSale = catchAsyncError(async (req, res, next) => {
   let saleId = "";
   let similarId = false;
+
   do {
     saleId = generateSaleId();
     similarId = await Sale.findOne({ saleId });
   } while (similarId);
-
-  const sale = await Sale.create({ ...req.body, saleId });
 
   // checking if total payment is less than partial payment amount
   if (req.body.total < req.body.partialPaymentAmount)
     return next(
       new ErrorHandler(400, "Partial payment is more than total amount")
     );
+
+  const sale = await Sale.create({ ...req.body, saleId });
+
+  if (sale) {
+    const branch = await Branch.findById(req.body.branch);
+
+    for (const item of req.body.items) {
+      // Find the product in the branch's products array
+
+      const product = branch.products.find((prod) =>
+        new mongoose.Types.ObjectId(prod.id).equals(
+          new mongoose.Types.ObjectId(item._id)
+        )
+      );
+
+      if (product) {
+        // Reduce the quantity of the product in the branch
+        product.quantity -= item.quantity;
+      }
+    }
+    // Save the updated branch with reduced quantities
+    await branch.save();
+  }
 
   res.status(200).json({
     success: true,
