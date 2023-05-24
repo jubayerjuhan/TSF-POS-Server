@@ -18,30 +18,38 @@ const saleSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    items: [
-      {
-        name: {
-          type: String,
-          required: true,
+    items: {
+      type: [
+        {
+          name: {
+            type: String,
+            required: true,
+          },
+          photo: {
+            type: String,
+            required: true,
+          },
+          id: {
+            type: Number,
+            required: true,
+          },
+          quantity: {
+            type: Number,
+            required: true,
+          },
+          unitPrice: {
+            type: Number,
+            required: true,
+          },
         },
-        photo: {
-          type: String,
-          required: true,
+      ],
+      validate: {
+        validator: function (items) {
+          return items.length > 0;
         },
-        id: {
-          type: Number,
-          required: true,
-        },
-        quantity: {
-          type: Number,
-          required: true,
-        },
-        unitPrice: {
-          type: Number,
-          required: true,
-        },
+        message: "Please Select Product First",
       },
-    ],
+    },
     paymentMethod: {
       type: String,
       enum: ["Cash", "Credit Card", "bKash"],
@@ -71,6 +79,10 @@ const saleSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Branch",
       required: [true, "Branch Is Required"],
+    },
+    saleId: {
+      type: Number,
+      required: true,
     },
   },
   { timestamps: true }

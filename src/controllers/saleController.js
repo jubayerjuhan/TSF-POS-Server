@@ -5,10 +5,18 @@ import catchAsyncError from "../utils/catchAsyncError.js";
 import ErrorHandler from "../middlewares/error/errorHandler.js";
 import mongoose from "mongoose";
 import moment from "moment";
+import generateSaleId from "../helperFunctions/sale/generateSaleId.js";
 
 // controller function to add a sale
 export const makeSale = catchAsyncError(async (req, res, next) => {
-  const sale = await Sale.create(req.body);
+  let saleId = "";
+  let similarId = false;
+  do {
+    saleId = generateSaleId();
+    similarId = await Sale.findOne({ saleId });
+  } while (similarId);
+
+  const sale = await Sale.create({ ...req.body, saleId });
 
   // checking if total payment is less than partial payment amount
   if (req.body.total < req.body.partialPaymentAmount)
@@ -42,8 +50,7 @@ export const deleteSale = catchAsyncError(async (req, res, next) => {
 export const getSale = catchAsyncError(async (req, res, next) => {
   const { id } = req.params;
 
-  const sale = await Sale.findById(id);
-
+  const sale = await Sale.findById(id).populate("branch");
   // throwing error if no sale with the id available
   if (!sale)
     return next(new ErrorHandler(404, "No sale found with this sale id"));
