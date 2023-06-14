@@ -7,7 +7,7 @@ import { fileURLToPath } from "url";
 // Database Connection Func
 import connectDb from "./db/index.js";
 // Error Handler and Catcher
-import errorCatcherMiddleWare from "./middlewareS/error/errorCatcher.js";
+import errorCatcherMiddleWare from "./middlewares/error/errorCatcher.js";
 import ErrorHandler from "./middlewares/error/errorHandler.js";
 //Importing Routes Here
 import userRoutes from "./routes/userRoutes.js";
