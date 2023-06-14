@@ -4,9 +4,11 @@ import express from "express";
 import {
   completeSaleWithFullAmount,
   deleteSale,
+  getPartialPayments,
   getSale,
   getSales,
   makeSale,
+  salesAndPartialPayments,
 } from "../controllers/saleController.js";
 
 // verifying functions
@@ -20,6 +22,12 @@ router.route("/add").post(verifyAdminAndModerator, makeSale);
 
 // get all sale list
 router.route("/list").get(verifyAdminAndModerator, getSales);
+router
+  .route("/partial-payment/list")
+  .get(verifyAdminAndModerator, getPartialPayments);
+
+//all sales and partial payments for graph
+router.route("/all/list").get(verifyAdminAndModerator, salesAndPartialPayments);
 
 // action routes for single route
 router

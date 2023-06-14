@@ -105,8 +105,7 @@ export const completeSaleWithFullAmount = catchAsyncError(
     const sale = await Sale.findByIdAndUpdate(
       id,
       {
-        partialPayment: false,
-        partialPaymentAmount: 0,
+        partialAmountPayingDate: Date.now(),
       },
       { new: true }
     );
@@ -267,3 +266,89 @@ export const getSales = catchAsyncError(async (req, res, next) => {
           },
   });
 });
+
+export const getPartialPayments = catchAsyncError(async (req, res, next) => {
+  const { startDate, endDate, branch } = req.query;
+
+  const completedPartialPayments = await Sale.find({
+    partialAmountPayingDate: {
+      $gte: moment(startDate).startOf("day").toDate(),
+      $lte: moment(endDate).endOf("day").toDate(),
+    },
+    branch: branch ? branch : { $exists: true },
+  });
+
+  const incompletedPartialPayment = await Sale.find({
+    createdAt: {
+      $gte: moment(startDate).startOf("day").toDate(),
+      $lte: moment(endDate).endOf("day").toDate(),
+    },
+    branch: branch ? branch : { $exists: true },
+    partialAmountPayingDate: { $exists: false },
+    partialPayment: true,
+  });
+
+  const completeModifiedSales = completedPartialPayments.map((sale) => {
+    const secondPartialPaymentAmount = sale.total - sale.partialPaymentAmount;
+    return { ...sale._doc, secondPartialPaymentAmount };
+  });
+
+  const incompleteModifiedSales = incompletedPartialPayment.map((sale) => {
+    const secondPartialPaymentAmount = sale.total - sale.partialPaymentAmount;
+    return { secondPartialPaymentAmount };
+  });
+
+  let recivedAmount = 0;
+  let toBeRecivedAmount = 0;
+
+  const secondPartialAmountRecived = completeModifiedSales.forEach((sale) => {
+    recivedAmount += sale.secondPartialPaymentAmount;
+  });
+  const secondPartialAmountToBeRecived = incompleteModifiedSales.forEach(
+    (sale) => {
+      toBeRecivedAmount += sale.secondPartialPaymentAmount;
+    }
+  );
+
+  res.status(200).json({
+    success: true,
+    secondPartialAmountRecived: recivedAmount,
+    secondPartialAmountToBeRecived: toBeRecivedAmount,
+  });
+});
+
+export const salesAndPartialPayments = catchAsyncError(
+  async (req, res, next) => {
+    const { startDate, endDate, branch } = req.query;
+
+    const secondPartialPayments = await Sale.find({
+      partialAmountPayingDate: {
+        $gte: moment(startDate).startOf("day").toDate(),
+        $lte: moment(endDate).endOf("day").toDate(),
+      },
+      branch: branch ? branch : { $exists: true },
+    });
+
+    const salesAndFirstPartialPayment = await Sale.find({
+      createdAt: {
+        $gte: moment(startDate).startOf("day").toDate(),
+        $lte: moment(endDate).endOf("day").toDate(),
+      },
+      branch: branch ? branch : { $exists: true },
+    });
+
+    const allSales = [];
+
+    [...secondPartialPayments, ...salesAndFirstPartialPayment].forEach(
+      (sale) => {
+        const available = allSales.find((s) => s._id.equals(sale._id));
+        if (!available) allSales.push(sale);
+      }
+    );
+
+    res.status(200).json({
+      success: true,
+      allSales,
+    });
+  }
+);

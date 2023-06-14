@@ -41,6 +41,10 @@ const saleSchema = new mongoose.Schema(
             type: Number,
             required: true,
           },
+          costPrice: {
+            type: Number,
+            required: true,
+          },
         },
       ],
       validate: {
@@ -83,6 +87,10 @@ const saleSchema = new mongoose.Schema(
     saleId: {
       type: Number,
       required: true,
+    },
+
+    partialAmountPayingDate: {
+      type: Date,
     },
   },
   { timestamps: true }
