@@ -4,7 +4,7 @@ const expenseSchema = new mongoose.Schema(
   {
     type: {
       type: String,
-      enum: ["salary", "food", "other"],
+      enum: ["salary", "food", "other", "shipping"],
       required: [true, "Expense Type Is Required"],
     },
     amount: {
