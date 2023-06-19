@@ -12,7 +12,11 @@ const customOrderSchema = new mongoose.Schema(
       default: "Order Taken",
     },
     advancePayment: { type: Number, default: 0, required: true },
-    branch: { type: String, required: true },
+    branch: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Branch",
+      required: true,
+    },
     products: [
       {
         product: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },

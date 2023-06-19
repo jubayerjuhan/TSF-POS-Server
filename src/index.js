@@ -16,6 +16,7 @@ import branchRoutes from "./routes/branchRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
 import saleRoutes from "./routes/saleRoutes.js";
 import expenseRoutes from "./routes/expenseRoutes.js";
+import customOrderRoutes from "./routes/customOrderRoutes.js";
 
 // importing environment variables
 import "dotenv/config";
@@ -47,6 +48,7 @@ app.use("/auth", authRoutes);
 app.use("/branch", branchRoutes);
 app.use("/product", productRoutes);
 app.use("/sale", saleRoutes);
+app.use("/custom-order", customOrderRoutes);
 app.use("/expense", expenseRoutes);
 
 // test router
