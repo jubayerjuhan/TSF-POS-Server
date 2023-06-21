@@ -17,6 +17,9 @@ const customOrderSchema = new mongoose.Schema(
       ref: "Branch",
       required: true,
     },
+    orderId: {
+      type: Number,
+    },
     products: [
       {
         product: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },

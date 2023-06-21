@@ -5,26 +5,16 @@ import catchAsyncError from "../utils/catchAsyncError.js";
 import ErrorHandler from "../middlewares/error/errorHandler.js";
 import mongoose from "mongoose";
 import moment from "moment";
-import generateSaleId from "../helperFunctions/sale/generateSaleId.js";
 import Branch from "../models/branchModel.js";
 
 // controller function to add a sale
 export const makeSale = catchAsyncError(async (req, res, next) => {
-  let saleId = "";
-  let similarId = false;
-
-  do {
-    saleId = generateSaleId();
-    similarId = await Sale.findOne({ saleId });
-  } while (similarId);
-
   // checking if total payment is less than partial payment amount
   if (req.body.total < req.body.partialPaymentAmount)
     return next(
       new ErrorHandler(400, "Partial payment is more than total amount")
     );
-
-  const sale = await Sale.create({ ...req.body, saleId });
+  const sale = await Sale.create({ ...req.body });
 
   if (sale) {
     const branch = await Branch.findById(req.body.branch);

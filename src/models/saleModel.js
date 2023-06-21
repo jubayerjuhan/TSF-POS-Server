@@ -86,7 +86,6 @@ const saleSchema = new mongoose.Schema(
     },
     saleId: {
       type: Number,
-      required: true,
     },
 
     partialAmountPayingDate: {
@@ -95,6 +94,21 @@ const saleSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+// Define pre-save middleware
+saleSchema.pre("save", async function (next) {
+  if (this.isNew) {
+    // Generate and assign saleId only if the document is new
+    const lastSale = await Sale.findOne(
+      {},
+      {},
+      { sort: { saleId: -1 } }
+    ).exec();
+    const newSaleId = lastSale ? lastSale.saleId + 1 : 1;
+    this.saleId = newSaleId;
+  }
+  next();
+});
 
 const Sale = mongoose.model("Sale", saleSchema);
 
