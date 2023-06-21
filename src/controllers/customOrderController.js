@@ -16,6 +16,26 @@ export const createCustomOrder = catchAsyncError(async (req, res, next) => {
   });
 });
 
+// Get all custom orders
+export const getAllCustomOrders = catchAsyncError(async (req, res, next) => {
+  const { branchId } = req.query;
+
+  let query = CustomOrder.find();
+
+  if (branchId) {
+    query = query.where("branch").equals(branchId);
+  }
+
+  const orders = await query
+    .populate("branch", "name") // Populating the branch field with the 'name' field
+    .populate("products.product"); // Populating the 'product' field within the 'products' array with the 'name' field
+
+  res.status(200).json({
+    success: true,
+    data: orders,
+  });
+});
+
 // get custom order by id
 export const getCustomOrderById = catchAsyncError(async (req, res, next) => {
   const { id } = req.params;

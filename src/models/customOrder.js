@@ -5,6 +5,8 @@ const customOrderSchema = new mongoose.Schema(
     customerName: { type: String, required: true },
     customerPhone: { type: Number, required: true },
     description: { type: String, required: true },
+    color: { type: String, required: true },
+    wood: { type: String, required: true },
     totalPrice: { type: Number, required: true },
     status: {
       type: String,
@@ -23,7 +25,7 @@ const customOrderSchema = new mongoose.Schema(
     products: [
       {
         product: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
-        quantity: { type: Number, required: true },
+        quantity: { type: Number },
       },
     ],
   },
