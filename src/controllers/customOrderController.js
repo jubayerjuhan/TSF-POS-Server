@@ -32,7 +32,7 @@ export const getAllCustomOrders = catchAsyncError(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
-    data: orders,
+    orders,
   });
 });
 
@@ -50,7 +50,7 @@ export const getCustomOrderById = catchAsyncError(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
-    data: order,
+    order,
   });
 });
 
@@ -78,6 +78,8 @@ export const updateCustomOrderStatus = catchAsyncError(
 
     const order = await CustomOrder.findById(id);
 
+    const factoryBranch = await Branch.findById(process.env.FACTORY_BRANCH_ID);
+
     if (!order) {
       return next(new ErrorHandler(404, "Custom Order not found"));
     }
@@ -99,6 +101,21 @@ export const updateCustomOrderStatus = catchAsyncError(
       );
     }
 
+    if (status === "Shipped") {
+      for (const productId of productIds) {
+        const product = factoryBranch.products.find((pd) =>
+          pd.id.equals(productId.id)
+        );
+
+        console.log(product, productId, "product and productId");
+        if (!product || product.quantity < productId.quantity) {
+          return next(
+            new ErrorHandler(400, "Insufficient Product Quantity Available...")
+          );
+        }
+      }
+    }
+
     order.status = status;
 
     if (status === "Shipped") {
@@ -107,14 +124,14 @@ export const updateCustomOrderStatus = catchAsyncError(
         quantity: productId.quantity,
       }));
 
-      productIds.forEach((productId) => {
-        moveTheProductToTheBranch(
+      for (const productId of productIds) {
+        await moveTheProductToTheBranch(
           order.branch,
           productId.id,
           productId.quantity,
           next
         );
-      });
+      }
     } else {
       order.products = [];
     }
@@ -123,7 +140,7 @@ export const updateCustomOrderStatus = catchAsyncError(
 
     res.status(200).json({
       success: true,
-      data: updatedOrder,
+      order: updatedOrder,
     });
   }
 );
@@ -157,11 +174,17 @@ const moveTheProductToTheBranch = async (
   );
 
   // Increase the product quantity in the target branch
-  await Branch.findByIdAndUpdate(
-    toBranch,
-    {
-      $addToSet: { products: { id: productId, quantity: quantity } },
-    },
-    { new: true }
+  const toBranchInfo = await Branch.findOne(toBranch);
+
+  const existProduct = toBranchInfo.products.find((pd) =>
+    pd.id.equals(productId)
   );
+
+  if (existProduct) {
+    existProduct.quantity = existProduct.quantity + quantity;
+  } else {
+    toBranchInfo.products.push({ id: productId, quantity });
+  }
+
+  await toBranchInfo.save();
 };

@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const customOrderSchema = new mongoose.Schema(
   {
     customerName: { type: String, required: true },
-    customerPhone: { type: Number, required: true },
+    customerPhone: { type: String, required: true },
     description: { type: String, required: true },
     color: { type: String, required: true },
     wood: { type: String, required: true },
@@ -31,6 +31,21 @@ const customOrderSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+// Define pre-save middleware
+customOrderSchema.pre("save", async function (next) {
+  if (this.isNew) {
+    // Generate and assign orderId only if the document is new
+    const lastOrder = await CustomOrder.findOne(
+      {},
+      {},
+      { sort: { orderId: -1 } }
+    ).exec();
+    const newOrderId = lastOrder ? lastOrder.orderId + 1 : 1;
+    this.orderId = newOrderId;
+  }
+  next();
+});
 
 const CustomOrder = mongoose.model("CustomOrder", customOrderSchema);
 
