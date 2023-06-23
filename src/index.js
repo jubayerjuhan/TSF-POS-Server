@@ -17,6 +17,7 @@ import productRoutes from "./routes/productRoutes.js";
 import saleRoutes from "./routes/saleRoutes.js";
 import expenseRoutes from "./routes/expenseRoutes.js";
 import customOrderRoutes from "./routes/customOrderRoutes.js";
+import branchValuationRoutes from "./routes/branchValuationRoutes.js";
 
 // importing environment variables
 import "dotenv/config";
@@ -46,6 +47,7 @@ app.get("/", async (req, res, next) => {
 app.use("/user", userRoutes);
 app.use("/auth", authRoutes);
 app.use("/branch", branchRoutes);
+app.use("/branch-valuation", branchValuationRoutes);
 app.use("/product", productRoutes);
 app.use("/sale", saleRoutes);
 app.use("/custom-order", customOrderRoutes);

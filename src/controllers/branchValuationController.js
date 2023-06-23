@@ -2,7 +2,16 @@ import BranchValuation from "../models/branchValuationModel";
 
 // Controller function to get all branch valuations
 export const getBranchValuations = catchAsyncError(async (req, res, next) => {
-  const branchValuations = await BranchValuation.find().populate("branch");
+  const { branch } = req.query;
+  let branchValuations;
+
+  if (branch) {
+    branchValuations = await BranchValuation.find({ branch }).populate(
+      "branch"
+    );
+  } else {
+    branchValuations = await BranchValuation.find().populate("branch");
+  }
 
   res.status(200).json({
     success: true,
