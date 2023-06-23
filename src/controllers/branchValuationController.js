@@ -1,16 +1,20 @@
-import BranchValuation from "../models/branchValuationModel";
+import BranchValuation from "../models/branchValuationModel.js";
+import catchAsyncError from "../utils/catchAsyncError.js";
 
 // Controller function to get all branch valuations
 export const getBranchValuations = catchAsyncError(async (req, res, next) => {
   const { branch } = req.query;
   let branchValuations;
 
+  console.log(branch, "branch...");
+
   if (branch) {
     branchValuations = await BranchValuation.find({ branch }).populate(
-      "branch"
+      "branch",
+      "name"
     );
   } else {
-    branchValuations = await BranchValuation.find().populate("branch");
+    branchValuations = await BranchValuation.find().populate("branch", "name");
   }
 
   res.status(200).json({
@@ -21,12 +25,11 @@ export const getBranchValuations = catchAsyncError(async (req, res, next) => {
 
 // Controller function to create a new branch valuation
 export const createBranchValuation = catchAsyncError(async (req, res, next) => {
-  const { branch, value } = req.body;
-
-  const branchValuation = await BranchValuation.create({ branch, value });
+  const branchValuation = await BranchValuation.create(req.body);
 
   res.status(201).json({
     success: true,
+    message: "Branch Valuation Added",
     data: branchValuation,
   });
 });
