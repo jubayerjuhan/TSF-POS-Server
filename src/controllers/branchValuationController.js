@@ -5,8 +5,7 @@ import catchAsyncError from "../utils/catchAsyncError.js";
 export const getBranchValuations = catchAsyncError(async (req, res, next) => {
   const { branch } = req.query;
   let branchValuations;
-
-  console.log(branch, "branch...");
+  let totalAmount = 0;
 
   if (branch) {
     branchValuations = await BranchValuation.find({ branch }).populate(
@@ -17,9 +16,15 @@ export const getBranchValuations = catchAsyncError(async (req, res, next) => {
     branchValuations = await BranchValuation.find().populate("branch", "name");
   }
 
+  // Calculate the sum of amounts
+  for (const valuation of branchValuations) {
+    totalAmount += valuation.amount;
+  }
+
   res.status(200).json({
     success: true,
     data: branchValuations,
+    totalAmount: totalAmount,
   });
 });
 
