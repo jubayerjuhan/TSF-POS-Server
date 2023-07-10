@@ -19,6 +19,12 @@ const customOrderSchema = new mongoose.Schema(
       ref: "Branch",
       required: true,
     },
+    deliveredAt: {
+      type: Date,
+      required: function () {
+        return this.status === "Delivered";
+      },
+    },
     orderId: {
       type: Number,
     },

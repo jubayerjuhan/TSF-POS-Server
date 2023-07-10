@@ -2,6 +2,7 @@ import catchAsyncError from "../utils/catchAsyncError.js";
 import ErrorHandler from "../middlewares/error/errorHandler.js";
 import CustomOrder from "../models/customOrder.js";
 import Branch from "../models/branchModel.js";
+import moment from "moment";
 
 // creating custom order
 export const createCustomOrder = catchAsyncError(async (req, res, next) => {
@@ -116,7 +117,26 @@ export const updateCustomOrderStatus = catchAsyncError(
       }
     }
 
+    if (status === "Delivered") {
+      order.deliveredAt = moment();
+    }
     order.status = status;
+
+    if (order.status === "Delivered") {
+      const orderBranch = await Branch.findById(order.branch._id);
+      console.log(orderBranch, "orderBranch before");
+      order.products.forEach((orderProduct) => {
+        orderBranch.products.forEach((branchProduct) => {
+          if (branchProduct.id.toString() === orderProduct.product.toString()) {
+            // Reduce the quantity of the matched product in the branch
+            branchProduct.quantity -= orderProduct.quantity;
+          }
+        });
+      });
+
+      // Save the updated branch with reduced quantities
+      await orderBranch.save();
+    }
 
     if (status === "Shipped") {
       order.products = productIds.map((productId) => ({
