@@ -213,3 +213,29 @@ const moveTheProductToTheBranch = async (
 
   await toBranchInfo.save();
 };
+
+export const getCustomOrderAmount = catchAsyncError(async (req, res, next) => {
+  const { branchId, fromDate, toDate } = req.query;
+
+  let query = CustomOrder.find();
+
+  if (branchId) {
+    query = query.where("branch").equals(branchId);
+  }
+
+  if (fromDate && toDate) {
+    const startDate = moment(fromDate).startOf("day");
+    const endDate = moment(toDate).endOf("day");
+
+    query = query.where("createdAt").gte(startDate).lte(endDate);
+  }
+
+  const orders = await query
+    .populate("branch", "name")
+    .populate("products.product");
+
+  res.status(200).json({
+    success: true,
+    orders,
+  });
+});

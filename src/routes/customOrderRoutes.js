@@ -3,6 +3,7 @@ import {
   createCustomOrder,
   deleteCustomOrder,
   getAllCustomOrders,
+  getCustomOrderAmount,
   getCustomOrderById,
   updateCustomOrderStatus,
 } from "../controllers/customOrderController.js";
@@ -12,6 +13,7 @@ const router = express.Router();
 
 router.route("/create").post(createCustomOrder);
 router.route("/list").get(getAllCustomOrders);
+router.route("/amount").get(getCustomOrderAmount);
 router.route("/action/:id").get(getCustomOrderById);
 router.route("/action/:id").delete(deleteCustomOrder);
 router.route("/action/:id").put(updateCustomOrderStatus);
