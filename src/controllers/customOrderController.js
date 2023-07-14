@@ -234,8 +234,18 @@ export const getCustomOrderAmount = catchAsyncError(async (req, res, next) => {
     .populate("branch", "name")
     .populate("products.product");
 
+  let advancePayment = 0;
+  let fullPaymant = 0;
+
+  orders.map((order) => {
+    if (!order.deliveredAt) {
+      advancePayment += order.advancePayment;
+    }
+  });
+
   res.status(200).json({
     success: true,
     orders,
+    advancePayment,
   });
 });
