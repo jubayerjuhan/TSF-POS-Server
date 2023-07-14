@@ -223,10 +223,11 @@ export const getCustomOrderAmount = catchAsyncError(async (req, res, next) => {
     query = query.where("branch").equals(branchId);
   }
 
-  if (fromDate && toDate) {
-    const startDate = moment(fromDate).startOf("day");
-    const endDate = moment(toDate).endOf("day");
+  // making start date and end date endof and start of with moment
+  const startDate = moment(fromDate).startOf("day");
+  const endDate = moment(toDate).endOf("day");
 
+  if (fromDate && toDate) {
     query = query.where("createdAt").gte(startDate).lte(endDate);
   }
 
@@ -234,18 +235,27 @@ export const getCustomOrderAmount = catchAsyncError(async (req, res, next) => {
     .populate("branch", "name")
     .populate("products.product");
 
+  const completedOrders = await CustomOrder.find({
+    deliveredAt: { $gte: startDate, $lte: endDate },
+  });
+
   let advancePayment = 0;
-  let fullPaymant = 0;
+  let fullPayment = 0;
 
   orders.map((order) => {
-    if (!order.deliveredAt) {
-      advancePayment += order.advancePayment;
-    }
+    // console.log(order, "order...1");
+    advancePayment += order.advancePayment;
+  });
+
+  console.log(completedOrders, "completed orders");
+  completedOrders.map((completedOrder) => {
+    fullPayment += completedOrder.totalPrice - completedOrder.advancePayment;
   });
 
   res.status(200).json({
     success: true,
     orders,
     advancePayment,
+    fullPayment,
   });
 });

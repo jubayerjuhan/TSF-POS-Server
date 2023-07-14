@@ -19,6 +19,15 @@ const customOrderSchema = new mongoose.Schema(
       ref: "Branch",
       required: true,
     },
+
+    advancePaymentAt: {
+      type: Date,
+      default: function () {
+        return new Date().toISOString();
+      },
+      required: true,
+    },
+
     deliveredAt: {
       type: Date,
       required: function () {
