@@ -152,8 +152,6 @@ export const updateCustomOrderStatus = catchAsyncError(
           next
         );
       }
-    } else {
-      order.products = [];
     }
 
     const updatedOrder = await order.save();
