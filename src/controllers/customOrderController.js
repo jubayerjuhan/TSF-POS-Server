@@ -255,7 +255,10 @@ export const getCustomOrderAmount = catchAsyncError(async (req, res, next) => {
   res.status(200).json({
     success: true,
     orders,
-    advancePayment,
-    fullPayment,
+    amount: {
+      totalRevenue: advancePayment + fullPayment,
+      advancePayment,
+      fullPayment,
+    },
   });
 });
