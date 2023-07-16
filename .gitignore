@@ -16,8 +16,7 @@ jspm_packages/
 dist
 build
 
-/src/images/products/*
-/src/images/avatars/*
+
 
 # local dev env files
 .env.local
