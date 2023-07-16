@@ -233,20 +233,29 @@ export const getCustomOrderAmount = catchAsyncError(async (req, res, next) => {
     .populate("branch", "name")
     .populate("products.product");
 
-  const completedOrders = await CustomOrder.find({
-    deliveredAt: { $gte: startDate, $lte: endDate },
-  });
+  let completedOrdersQuery = {};
+
+  if (branchId) {
+    completedOrdersQuery = {
+      deliveredAt: { $gte: startDate, $lte: endDate },
+      branch: branchId,
+    };
+  } else {
+    completedOrdersQuery = {
+      deliveredAt: { $gte: startDate, $lte: endDate },
+    };
+  }
+
+  const completedOrders = await CustomOrder.find(completedOrdersQuery);
 
   let advancePayment = 0;
   let fullPayment = 0;
 
-  orders.map((order) => {
-    // console.log(order, "order...1");
+  orders.forEach((order) => {
     advancePayment += order.advancePayment;
   });
 
-  console.log(completedOrders, "completed orders");
-  completedOrders.map((completedOrder) => {
+  completedOrders.forEach((completedOrder) => {
     fullPayment += completedOrder.totalPrice - completedOrder.advancePayment;
   });
 
