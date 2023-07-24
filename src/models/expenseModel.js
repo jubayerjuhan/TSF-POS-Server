@@ -22,12 +22,6 @@ const expenseSchema = new mongoose.Schema(
     },
     description: {
       type: String,
-      required: [
-        function () {
-          return this.type === "other";
-        },
-        "Description Name Is Required",
-      ],
     },
 
     branch: {
