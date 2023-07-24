@@ -10,8 +10,8 @@ Short description of the project.
 ## Usage
 
 1. Install all dependecies : `npm install || yarn install`
-1. Start the server: `npm start || yarn `
-1. Access the API at: `http://localhost:3000/api/`
+2. Start the server: `npm start || yarn `
+3. Access the API at: `http://localhost:3000/api/`
 
 ## Features
 

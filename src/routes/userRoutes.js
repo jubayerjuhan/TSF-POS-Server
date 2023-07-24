@@ -14,7 +14,7 @@ import verifyAdmin from "../middlewares/verification/verifyAdmin.js";
 const router = express.Router();
 
 // Defineing all user routes here
-router.route("/create").post(verifyAdmin, createUser);
+router.route("/create").post(createUser);
 router.route("/action/:id").delete(verifyAdmin, deleteUser);
 router.route("/list").get(verifyAdmin, getUsersList);
 

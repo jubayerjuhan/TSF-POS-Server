@@ -4,6 +4,7 @@ import catchAsyncError from "../utils/catchAsyncError.js";
 
 // Creating a user with create function
 export const createUser = catchAsyncError(async (req, res, next) => {
+  if (req.body.role === "admin") req.body.branch = undefined;
   // creating user on mongo db
   const user = await User.create(req.body);
 
