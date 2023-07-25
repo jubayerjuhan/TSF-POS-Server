@@ -31,14 +31,69 @@ export const createProduct = catchAsyncError(async (req, res, next) => {
   });
 });
 
-// controller function to get all products
+// Controller function to get all products with total stock and branch-wise stock
 export const getProductList = catchAsyncError(async (req, res, next) => {
+  // Fetch all products
   const products = await Product.find();
+
+  // Fetch all branches
+  const branches = await Branch.find();
+
+  // Calculate total stock for each product and branch-wise stock
+  const productsWithTotalStock = products.map((product) => {
+    // Initialize total stock for the current product
+    let totalStock = 0;
+
+    // Initialize an array to hold branch-wise stock details
+    const branchStocks = [];
+
+    // Loop through each branch
+    branches.forEach((branch) => {
+      // Find the product in the branch's products array
+      const branchProduct = branch.products.find(
+        (item) => item.id.toString() === product._id.toString()
+      );
+
+      // If the product exists in the branch, add its quantity to the total stock
+      if (branchProduct) {
+        totalStock += branchProduct.quantity || 0;
+        branchStocks.push({
+          branchName: branch.name,
+          stock: branchProduct.quantity || 0,
+        });
+      }
+    });
+
+    // Create a new object with the product details, total stock, and branch-wise stock details
+    return {
+      ...product.toJSON(),
+      totalStock,
+      branchStocks,
+    };
+  });
+
   res.status(200).json({
     success: true,
-    products,
+    products: productsWithTotalStock,
   });
 });
+
+// products.map((product) => {
+//   branches.map((branch) => {
+//     branch.products.map((branchProduct) => {
+//       console.log(branchProduct.id === product._id);
+//     });
+//   });
+// });
+// const countTotalStockOfProduct = (queryProduct) => {
+//   branches?.forEach((branch, index) => {
+//     if (!branch) return;
+
+//     branch.products.map((product) => {
+//       console.log(product._id);
+//     });
+//   });
+// };
 
 // Controller function to delete product
 export const deleteProduct = catchAsyncError(async (req, res, next) => {
