@@ -1,6 +1,7 @@
 import ErrorHandler from "../middlewares/error/errorHandler.js";
 import Branch from "../models/branchModel.js";
 import Product from "../models/productModel.js";
+import Sale from "../models/saleModel.js";
 import catchAsyncError from "../utils/catchAsyncError.js";
 import deleteFile from "../utils/files/deleteFile.js";
 import { fileUrlParser } from "../utils/files/fileUrlParser.js";
@@ -77,23 +78,6 @@ export const getProductList = catchAsyncError(async (req, res, next) => {
     products: productsWithTotalStock,
   });
 });
-
-// products.map((product) => {
-//   branches.map((branch) => {
-//     branch.products.map((branchProduct) => {
-//       console.log(branchProduct.id === product._id);
-//     });
-//   });
-// });
-// const countTotalStockOfProduct = (queryProduct) => {
-//   branches?.forEach((branch, index) => {
-//     if (!branch) return;
-
-//     branch.products.map((product) => {
-//       console.log(product._id);
-//     });
-//   });
-// };
 
 // Controller function to delete product
 export const deleteProduct = catchAsyncError(async (req, res, next) => {
@@ -200,9 +184,12 @@ export const searchProduct = catchAsyncError(async (req, res, next) => {
     },
   ]);
 
+  // Search for sales that include the product
+  const sales = await Sale.find({ "items.id": product.productId });
+
   // sending the product and the branchs the product available in
   res.status(200).json({
     success: true,
-    product: { ...product._doc, branches },
+    product: { ...product._doc, branches, sales },
   });
 });
