@@ -128,6 +128,14 @@ export const getSales = catchAsyncError(async (req, res, next) => {
    * then find without anything
    */
 
+  // Convert the start and end dates to Bangladesh time
+  const startOfDayBangladesh = startDate
+    ? moment.tz(startDate, "Asia/Dhaka").startOf("day").toDate()
+    : undefined;
+  const endOfDayBangladesh = endDate
+    ? moment.tz(endDate, "Asia/Dhaka").endOf("day").toDate()
+    : undefined;
+
   const saleInfo = await Sale.aggregate([
     {
       $match: {
@@ -136,8 +144,8 @@ export const getSales = catchAsyncError(async (req, res, next) => {
           startDate && endDate
             ? {
                 createdAt: {
-                  $gte: moment(startDate).startOf("day").toDate(),
-                  $lte: moment(endDate).endOf("day").toDate(),
+                  $gte: startOfDayBangladesh,
+                  $lte: endOfDayBangladesh,
                 },
               }
             : {},
