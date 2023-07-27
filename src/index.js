@@ -44,6 +44,7 @@ app.get("/", async (req, res, next) => {
   return next(new ErrorHandler(404, "Hello this is a error"));
 });
 
+console.log("Now Date :");
 console.log(moment().format("DD-MM-YYYY hh:mm a"));
 // Routes
 app.use("/user", userRoutes);
