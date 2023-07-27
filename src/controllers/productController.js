@@ -108,6 +108,8 @@ export const deleteProduct = catchAsyncError(async (req, res, next) => {
 export const editProduct = catchAsyncError(async (req, res, next) => {
   const { id } = req.params;
 
+  const image = await uploadImage(req, res, next);
+
   // searching for product with the req id
   const product = await Product.findById(id);
 
@@ -126,16 +128,10 @@ export const editProduct = catchAsyncError(async (req, res, next) => {
    * photo variable
    */
 
-  if (req.file) {
-    const photoUrl = product.photo.split("/products/")[1];
-    deleteFile("products", photoUrl);
-    photo = fileUrlParser(req.file);
-  }
-
   // update the product and send back the updated product
   const updatedProduct = await Product.findByIdAndUpdate(
     id,
-    { ...req.body, photo },
+    { ...req.body, photo: image },
     { new: true }
   );
   res.status(200).json({
