@@ -3,6 +3,7 @@ import ErrorHandler from "../middlewares/error/errorHandler.js";
 import CustomOrder from "../models/customOrder.js";
 import Branch from "../models/branchModel.js";
 import moment from "moment";
+import "moment-timezone";
 
 // creating custom order
 export const createCustomOrder = catchAsyncError(async (req, res, next) => {
@@ -235,14 +236,22 @@ export const getCustomOrderAmount = catchAsyncError(async (req, res, next) => {
 
   let completedOrdersQuery = {};
 
+  // Convert the start and end dates to Bangladesh time
+  const startOfDayBangladesh = startDate
+    ? moment.tz(startDate, "Asia/Dhaka").startOf("day").toDate()
+    : undefined;
+  const endOfDayBangladesh = endDate
+    ? moment.tz(endDate, "Asia/Dhaka").endOf("day").toDate()
+    : undefined;
+
   if (branchId) {
     completedOrdersQuery = {
-      deliveredAt: { $gte: startDate, $lte: endDate },
+      deliveredAt: { $gte: startOfDayBangladesh, $lte: endDate },
       branch: branchId,
     };
   } else {
     completedOrdersQuery = {
-      deliveredAt: { $gte: startDate, $lte: endDate },
+      deliveredAt: { $gte: endOfDayBangladesh, $lte: endDate },
     };
   }
 
