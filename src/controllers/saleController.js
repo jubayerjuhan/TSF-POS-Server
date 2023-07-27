@@ -6,6 +6,7 @@ import ErrorHandler from "../middlewares/error/errorHandler.js";
 import mongoose from "mongoose";
 import moment from "moment";
 import Branch from "../models/branchModel.js";
+import "moment-timezone";
 
 // controller function to add a sale
 export const makeSale = catchAsyncError(async (req, res, next) => {
