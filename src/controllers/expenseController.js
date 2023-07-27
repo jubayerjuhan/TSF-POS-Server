@@ -128,7 +128,7 @@ export const getExpenses = catchAsyncError(async (req, res, next) => {
   if (expenses.length === 0)
     return res
       .status(200)
-      .json({ sucess: true, expenses: [], totalExpense: 0 });
+      .json({ success: true, expenses: [], totalExpense: 0 });
 
   res.status(200).json({ ...expenses[0], success: true });
 });
