@@ -222,10 +222,6 @@ export const getCustomOrderAmount = catchAsyncError(async (req, res, next) => {
     query = query.where("branch").equals(branchId);
   }
 
-  // making start date and end date endof and start of with moment
-  const startDate = moment(fromDate).startOf("day");
-  const endDate = moment(toDate).endOf("day");
-
   if (fromDate && toDate) {
     query = query.where("createdAt").gte(startDate).lte(endDate);
   }
@@ -238,10 +234,10 @@ export const getCustomOrderAmount = catchAsyncError(async (req, res, next) => {
 
   // Convert the start and end dates to Bangladesh time
   const startOfDayBangladesh = startDate
-    ? moment.tz(startDate, "Asia/Dhaka").startOf("day").toDate()
+    ? moment.tz(fromDate, "Asia/Dhaka").startOf("day").toDate()
     : undefined;
   const endOfDayBangladesh = endDate
-    ? moment.tz(endDate, "Asia/Dhaka").endOf("day").toDate()
+    ? moment.tz(toDate, "Asia/Dhaka").endOf("day").toDate()
     : undefined;
 
   if (branchId) {
@@ -250,8 +246,15 @@ export const getCustomOrderAmount = catchAsyncError(async (req, res, next) => {
       branch: branchId,
     };
   } else {
+    // Separate moments for completedOrders query
+    const startOfDayBangladeshForCompletedOrders = startDate
+      ? moment.tz(startDate, "Asia/Dhaka").startOf("day").toDate()
+      : undefined;
     completedOrdersQuery = {
-      deliveredAt: { $gte: endOfDayBangladesh, $lte: endDate },
+      deliveredAt: {
+        $gte: startOfDayBangladeshForCompletedOrders,
+        $lte: endOfDayBangladesh,
+      },
     };
   }
 
