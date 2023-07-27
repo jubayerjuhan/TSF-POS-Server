@@ -57,7 +57,7 @@ export const getExpense = catchAsyncError(async (req, res, next) => {
 
 export const getExpenses = catchAsyncError(async (req, res, next) => {
   // Getting the dates from the body
-  const { date } = req.body;
+  const { startDate, endDate } = req.query;
 
   // Getting the branch from the query
   const { branch } = req.query;
@@ -74,12 +74,12 @@ export const getExpenses = catchAsyncError(async (req, res, next) => {
 
   const matchQuery = {
     $and: [
-      !date
+      !startDate
         ? {}
         : {
             createdAt: {
-              $gte: moment(date?.startDate).startOf("day").toDate(),
-              $lte: moment(date?.endDate).endOf("day").toDate(),
+              $gte: moment(startDate).startOf("day").toDate(),
+              $lte: moment(endDate).endOf("day").toDate(),
             },
           },
       branch ? { branch: new mongoose.Types.ObjectId(branch) } : {},
@@ -110,10 +110,25 @@ export const getExpenses = catchAsyncError(async (req, res, next) => {
         __v: 1,
       },
     },
+    {
+      $group: {
+        _id: null,
+        expenses: { $push: "$$ROOT" },
+        totalExpense: { $sum: "$amount" },
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        expenses: 1,
+        totalExpense: 1,
+      },
+    },
   ]);
+  if (expenses.length === 0)
+    return res
+      .status(200)
+      .json({ sucess: true, expenses: [], totalExpense: 0 });
 
-  res.status(200).json({
-    success: true,
-    expenses,
-  });
+  res.status(200).json({ ...expenses[0], success: true });
 });
