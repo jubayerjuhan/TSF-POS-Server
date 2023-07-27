@@ -5,11 +5,11 @@ import Sale from "../models/saleModel.js";
 import catchAsyncError from "../utils/catchAsyncError.js";
 import deleteFile from "../utils/files/deleteFile.js";
 import { fileUrlParser } from "../utils/files/fileUrlParser.js";
+import { uploadImage } from "../utils/uploadImage/uploadImage.js";
 
 // Controller Function To Add a Product To DB
 export const createProduct = catchAsyncError(async (req, res, next) => {
-  // parsing the file url to save database with the subfoldername
-  const fileUrl = fileUrlParser(req.file);
+  const image = await uploadImage(req, res, next);
 
   // finding the product with the product id if it exist or not
   const existingProductId = await Product.findOne({
@@ -23,7 +23,7 @@ export const createProduct = catchAsyncError(async (req, res, next) => {
   }
 
   // storing the product on database
-  const product = await Product.create({ ...req.body, photo: fileUrl });
+  const product = await Product.create({ ...req.body, photo: image });
 
   res.status(200).json({
     success: true,
@@ -185,7 +185,9 @@ export const searchProduct = catchAsyncError(async (req, res, next) => {
   ]);
 
   // Search for sales that include the product
-  const sales = await Sale.find({ "items.id": product.productId });
+  const sales = await Sale.find({ "items.id": product.productId }).populate(
+    "branch"
+  );
 
   // sending the product and the branchs the product available in
   res.status(200).json({

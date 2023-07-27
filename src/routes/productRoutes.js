@@ -11,9 +11,9 @@ import {
 
 // importing the verification function
 import verifyAdmin from "../middlewares/verification/verifyAdmin.js";
-import { productUpload } from "../middlewares/multer/multerConfig.js";
 import verifyAdminAndModerator from "../middlewares/verification/verifyAdminAndModerator.js";
-
+import { uploadImage } from "../utils/uploadImage/uploadImage.js";
+import { multerUpload } from "../middlewares/multer/multerConfig.js";
 // Create a new router instance
 const router = express.Router();
 /**
@@ -22,14 +22,14 @@ const router = express.Router();
 // create product
 router
   .route("/create")
-  .post(verifyAdmin, productUpload.single("photo"), createProduct);
+  .post(verifyAdmin, multerUpload.single("photo"), createProduct);
 
 router.route("/list").get(verifyAdmin, getProductList);
 // delete and update product
 router
   .route("/action/:id")
   .delete(verifyAdmin, deleteProduct)
-  .put(verifyAdmin, productUpload.single("photo"), editProduct);
+  .put(verifyAdmin, multerUpload.single("photo"), editProduct);
 
 // search product with product id
 router.route("/search").get(verifyAdminAndModerator, searchProduct);

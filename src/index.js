@@ -21,7 +21,7 @@ import branchValuationRoutes from "./routes/branchValuationRoutes.js";
 
 // importing environment variables
 import "dotenv/config";
-import { productUpload } from "./middlewares/multer/multerConfig.js";
+import multer from "multer";
 // import sendEmail from "./utils/email/email.js";
 const app = express();
 
@@ -52,11 +52,6 @@ app.use("/product", productRoutes);
 app.use("/sale", saleRoutes);
 app.use("/custom-order", customOrderRoutes);
 app.use("/expense", expenseRoutes);
-
-// test router
-app.post("/upload-photo", productUpload.single("photo"), (req, res, next) => {
-  console.log(req.file);
-});
 
 // Start the server
 app.listen(process.env.PORT, () => {
