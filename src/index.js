@@ -45,7 +45,7 @@ app.get("/", async (req, res, next) => {
 });
 
 console.log("Now Date :");
-console.log(moment().format("DD-MM-YYYY hh:mm a"));
+console.log(moment().tz("Asia/Dhaka").format("DD-MM-YYYY hh:mm a"));
 // Routes
 app.use("/user", userRoutes);
 app.use("/auth", authRoutes);

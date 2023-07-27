@@ -3,6 +3,7 @@ import ErrorHandler from "../middlewares/error/errorHandler.js";
 import Expense from "../models/expenseModel.js";
 import catchAsyncError from "../utils/catchAsyncError.js";
 import moment from "moment";
+import "moment-timezone";
 
 // controller function to add expense
 export const addExpense = catchAsyncError(async (req, res, next) => {
@@ -56,7 +57,7 @@ export const getExpense = catchAsyncError(async (req, res, next) => {
  */
 
 export const getExpenses = catchAsyncError(async (req, res, next) => {
-  // Getting the dates from the body
+  // Getting the dates from the query
   const { startDate, endDate } = req.query;
 
   // Getting the branch from the query
@@ -67,6 +68,14 @@ export const getExpenses = catchAsyncError(async (req, res, next) => {
     return next(new ErrorHandler(403, "You don't have permission"));
   }
 
+  // Convert the start and end dates to Bangladesh time
+  const startOfDayBangladesh = startDate
+    ? moment.tz(startDate, "Asia/Dhaka").startOf("day").toDate()
+    : undefined;
+  const endOfDayBangladesh = endDate
+    ? moment.tz(endDate, "Asia/Dhaka").endOf("day").toDate()
+    : undefined;
+
   /**
    * If date is available, then find with date. If not available,
    * then find without any filtering and find all expenses.
@@ -74,14 +83,14 @@ export const getExpenses = catchAsyncError(async (req, res, next) => {
 
   const matchQuery = {
     $and: [
-      !startDate
-        ? {}
-        : {
+      startOfDayBangladesh
+        ? {
             createdAt: {
-              $gte: moment(startDate).startOf("day").toDate(),
-              $lte: moment(endDate).endOf("day").toDate(),
+              $gte: startOfDayBangladesh,
+              $lte: endOfDayBangladesh,
             },
-          },
+          }
+        : {},
       branch ? { branch: new mongoose.Types.ObjectId(branch) } : {},
     ],
   };
@@ -125,10 +134,12 @@ export const getExpenses = catchAsyncError(async (req, res, next) => {
       },
     },
   ]);
-  if (expenses.length === 0)
+
+  if (expenses.length === 0) {
     return res
       .status(200)
       .json({ success: true, expenses: [], totalExpense: 0 });
+  }
 
   res.status(200).json({ ...expenses[0], success: true });
 });
