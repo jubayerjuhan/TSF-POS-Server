@@ -22,6 +22,7 @@ import branchValuationRoutes from "./routes/branchValuationRoutes.js";
 // importing environment variables
 import "dotenv/config";
 import multer from "multer";
+import moment from "moment";
 // import sendEmail from "./utils/email/email.js";
 const app = express();
 
@@ -43,6 +44,7 @@ app.get("/", async (req, res, next) => {
   return next(new ErrorHandler(404, "Hello this is a error"));
 });
 
+moment().format("DD-MM-YYYY hh:mm a");
 // Routes
 app.use("/user", userRoutes);
 app.use("/auth", authRoutes);
