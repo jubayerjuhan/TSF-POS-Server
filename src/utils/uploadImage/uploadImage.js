@@ -14,6 +14,7 @@ export const uploadImage = async (req, res) => {
     // Cloudinary response contains the image URL
     return result.secure_url;
   } catch (err) {
+    console.log(err, "error");
     return new ErrorHandler(500, "Error Uploading Image");
   }
 };

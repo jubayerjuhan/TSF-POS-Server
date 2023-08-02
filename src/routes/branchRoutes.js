@@ -17,7 +17,6 @@ import {
 // branch - product - controller function
 import {
   addProductToBranch,
-  changeProductQuantity,
   deleteProductFromBranch,
   moveProductBetweenBranches,
 } from "../controllers/branch/branchProductController.js";
@@ -25,6 +24,7 @@ import {
 // importing the verification function
 import verifyAdmin from "../middlewares/verification/verifyAdmin.js";
 import verifyAdminAndModerator from "../middlewares/verification/verifyAdminAndModerator.js";
+import { editProduct } from "../controllers/productController.js";
 
 // Create a new router instance
 const router = express.Router();
@@ -53,7 +53,7 @@ router
   .route("/product/:branchId")
   .post(verifyAdmin, addProductToBranch)
   .delete(verifyAdmin, deleteProductFromBranch)
-  .put(verifyAdmin, changeProductQuantity);
+  .put(verifyAdminAndModerator, editProduct);
 
 // move product between branches
 router

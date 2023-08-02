@@ -33,8 +33,6 @@ export const createProduct = catchAsyncError(async (req, res, next) => {
 });
 
 // Controller function to get all products with total stock and branch-wise stock
-// ...
-
 export const getProductList = catchAsyncError(async (req, res, next) => {
   // Fetch all products
   const products = await Product.find();
@@ -42,27 +40,8 @@ export const getProductList = catchAsyncError(async (req, res, next) => {
   // Fetch all branches
   const branches = await Branch.find();
 
-  // Fetch sales data for each product
-  const productSales = await Sale.aggregate([
-    {
-      $unwind: "$items",
-    },
-    {
-      $group: {
-        _id: "$items.id",
-        sales: { $sum: "$items.quantity" },
-      },
-    },
-  ]);
-
-  // Create a mapping of product IDs to their sales count
-  const productSalesMap = new Map();
-  productSales.forEach((sale) => {
-    productSalesMap.set(sale._id.toString(), sale.sales);
-  });
-
-  // Calculate total stock for each product and branch-wise stock, and add sales data
-  const productsWithTotalStockAndSales = products.map((product) => {
+  // Calculate total stock for each product and branch-wise stock
+  const productsWithTotalStock = products.map((product) => {
     // Initialize total stock for the current product
     let totalStock = 0;
 
@@ -86,21 +65,17 @@ export const getProductList = catchAsyncError(async (req, res, next) => {
       }
     });
 
-    // Get the sales count for the current product
-    const sales = productSalesMap.get(product.productId.toString()) || 0;
-
     // Create a new object with the product details, total stock, and branch-wise stock details
     return {
       ...product.toJSON(),
       totalStock,
       branchStocks,
-      sales,
     };
   });
 
   res.status(200).json({
     success: true,
-    products: productsWithTotalStockAndSales,
+    products: productsWithTotalStock,
   });
 });
 
@@ -133,10 +108,14 @@ export const deleteProduct = catchAsyncError(async (req, res, next) => {
 export const editProduct = catchAsyncError(async (req, res, next) => {
   const { id } = req.params;
 
-  const image = await uploadImage(req, res, next);
-
   // searching for product with the req id
   const product = await Product.findById(id);
+  let imageLink = product.photo;
+
+  if (req.file) {
+    const image = await uploadImage(req, res, next);
+    imageLink = image;
+  }
 
   // sending error if there is no product with the id
   if (!product)
@@ -156,7 +135,7 @@ export const editProduct = catchAsyncError(async (req, res, next) => {
   // update the product and send back the updated product
   const updatedProduct = await Product.findByIdAndUpdate(
     id,
-    { ...req.body, photo: image },
+    { ...req.body, photo: imageLink },
     { new: true }
   );
   res.status(200).json({
