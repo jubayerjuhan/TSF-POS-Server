@@ -29,7 +29,7 @@ router.route("/list").get(verifyAdmin, getProductList);
 router
   .route("/action/:id")
   .delete(verifyAdmin, deleteProduct)
-  .put(verifyAdmin, multerUpload.single("photo"), editProduct);
+  .put(verifyAdminAndModerator, multerUpload.single("photo"), editProduct);
 
 // search product with product id
 router.route("/search").get(verifyAdminAndModerator, searchProduct);
