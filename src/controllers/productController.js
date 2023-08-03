@@ -40,8 +40,27 @@ export const getProductList = catchAsyncError(async (req, res, next) => {
   // Fetch all branches
   const branches = await Branch.find();
 
-  // Calculate total stock for each product and branch-wise stock
-  const productsWithTotalStock = products.map((product) => {
+  // Fetch sales data for each product
+  const productSales = await Sale.aggregate([
+    {
+      $unwind: "$items",
+    },
+    {
+      $group: {
+        _id: "$items.id",
+        sales: { $sum: "$items.quantity" },
+      },
+    },
+  ]);
+
+  // Create a mapping of product IDs to their sales count
+  const productSalesMap = new Map();
+  productSales.forEach((sale) => {
+    productSalesMap.set(sale._id.toString(), sale.sales);
+  });
+
+  // Calculate total stock for each product and branch-wise stock, and add sales data
+  const productsWithTotalStockAndSales = products.map((product) => {
     // Initialize total stock for the current product
     let totalStock = 0;
 
@@ -65,17 +84,21 @@ export const getProductList = catchAsyncError(async (req, res, next) => {
       }
     });
 
+    // Get the sales count for the current product
+    const sales = productSalesMap.get(product.productId.toString()) || 0;
+
     // Create a new object with the product details, total stock, and branch-wise stock details
     return {
       ...product.toJSON(),
       totalStock,
       branchStocks,
+      sales,
     };
   });
 
   res.status(200).json({
     success: true,
-    products: productsWithTotalStock,
+    products: productsWithTotalStockAndSales,
   });
 });
 
