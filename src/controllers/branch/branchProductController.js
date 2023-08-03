@@ -74,33 +74,29 @@ export const deleteProductFromBranch = catchAsyncError(
   }
 );
 
-export const editProduct = catchAsyncError(async (req, res, next) => {
+export const changeProductQuantity = catchAsyncError(async (req, res, next) => {
   const { branchId } = req.params;
-  const { product, ...updatedFields } = req.body;
+  const { product, quantity } = req.body;
 
   console.log(req.body);
-  // Ensure that at least one field is provided in req.body
-  if (Object.keys(updatedFields).length === 0) {
-    return next(
-      new ErrorHandler(400, "At least one field to update is required")
-    );
-  }
+  //  throwing error if product id or quantity isn't available
+  if (!product || !quantity)
+    return next(new ErrorHandler(400, "Product id and quantity required"));
 
-  // Update the product in the branch.products array
+  // updating the product quantity on branch.products = [] array
   const branch = await Branch.updateOne(
     { _id: branchId, "products.id": product },
-    { $set: { "products.$": updatedFields } }
+    { $set: { "products.$.quantity": quantity } }
   );
 
-  // Check if the product was updated successfully
-  if (branch.modifiedCount === 0) {
-    return next(new ErrorHandler(400, "Can't update product"));
-  }
+  //   if product count is same as previous throwing error
+  if (branch.modifiedCount === 0)
+    return next(new ErrorHandler(400, "Can't update product stock"));
 
-  // Sending response back to the client
+  // sending response back to client
   res.status(200).json({
     success: true,
-    message: "Product Updated",
+    message: "Stock Updated",
   });
 });
 
