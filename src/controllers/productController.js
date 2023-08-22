@@ -35,7 +35,7 @@ export const createProduct = catchAsyncError(async (req, res, next) => {
 // Controller function to get all products with total stock and branch-wise stock
 export const getProductList = catchAsyncError(async (req, res, next) => {
   // Fetch all products
-  const products = await Product.find();
+  const products = await Product.find().sort({ createdAt: -1 });;
 
   // Fetch all branches
   const branches = await Branch.find();
