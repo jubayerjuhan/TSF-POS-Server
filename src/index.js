@@ -41,7 +41,7 @@ app.use("/images", express.static(path.join(__dirname, "images")));
 
 // Define your routes
 app.get("/", async (req, res, next) => {
-  return next(new ErrorHandler(404, "Hello this is a error"));
+  res.send("Hello...!")
 });
 
 console.log("Now Date :");
