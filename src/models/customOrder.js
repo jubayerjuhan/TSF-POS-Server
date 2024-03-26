@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 const customOrderSchema = new mongoose.Schema(
   {
+    
     customerName: { type: String, required: true },
     customerPhone: { type: String, required: true },
     description: { type: String, required: true },
