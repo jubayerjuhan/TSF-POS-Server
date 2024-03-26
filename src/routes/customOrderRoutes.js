@@ -2,6 +2,7 @@ import express from "express";
 import {
   createCustomOrder,
   deleteCustomOrder,
+  editCustomOrder,
   getAllCustomOrders,
   getCustomOrderAmount,
   getCustomOrderById,
@@ -18,5 +19,6 @@ router.route("/amount").get(getCustomOrderAmount);
 router.route("/action/:id").get(getCustomOrderById);
 router.route("/action/:id").delete(deleteCustomOrder);
 router.route("/action/:id").put(updateCustomOrderStatus);
+router.route("/edit/:id").put(editCustomOrder);
 
 export default router;

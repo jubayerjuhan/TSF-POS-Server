@@ -23,6 +23,39 @@ export const createCustomOrder = catchAsyncError(async (req, res, next) => {
   });
 });
 
+// edit custom order color wood and total price
+export const editCustomOrder = catchAsyncError(async (req, res, next) => {
+  const { id } = req.params;
+  const orderData = req.body;
+
+  console.log(req.body, "req.body")
+
+  const order = await CustomOrder.findById(id);
+
+  if (!order) {
+    return next(new ErrorHandler(404, "Custom Order not found"));
+  }
+
+  try {
+    const updatedOrder = await CustomOrder.findByIdAndUpdate(id, orderData, {
+      new: true,
+      runValidators: true,
+      useFindAndModify: false,
+    });
+
+    res.status(200).json({
+      success: true,
+      order: updatedOrder,
+    });
+
+  } catch (error) {
+    console.log(error, "error")
+  }
+
+
+});
+
+
 // Get all custom orders
 export const getAllCustomOrders = catchAsyncError(async (req, res, next) => {
   const { branchId } = req.query;
