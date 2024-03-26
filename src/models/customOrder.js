@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const customOrderSchema = new mongoose.Schema(
   {
-    
+
     customerName: { type: String, required: true },
     customerPhone: { type: String, required: true },
     description: { type: String, required: true },
@@ -38,7 +38,10 @@ const customOrderSchema = new mongoose.Schema(
     orderId: {
       type: Number,
     },
-    photos: [{ type: String }],
+    photos: {
+      type: [String], 
+      default: [],
+    },
     products: [
       {
         product: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },

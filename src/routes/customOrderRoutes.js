@@ -19,6 +19,6 @@ router.route("/amount").get(getCustomOrderAmount);
 router.route("/action/:id").get(getCustomOrderById);
 router.route("/action/:id").delete(deleteCustomOrder);
 router.route("/action/:id").put(updateCustomOrderStatus);
-router.route("/edit/:id").put(editCustomOrder);
+router.route("/edit/:id").post(multerUpload.array("photos"),editCustomOrder);
 
 export default router;

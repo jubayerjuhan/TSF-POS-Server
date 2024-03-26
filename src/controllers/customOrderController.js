@@ -27,8 +27,12 @@ export const createCustomOrder = catchAsyncError(async (req, res, next) => {
 export const editCustomOrder = catchAsyncError(async (req, res, next) => {
   const { id } = req.params;
   const orderData = req.body;
+  const orderPhotos = req.files;
 
-  console.log(req.body, "req.body")
+  console.log(orderPhotos, "orderPhotos")
+  const imageURLs = await uploadImageArray(orderPhotos);
+
+  console.log(imageURLs, "imageURLs")
 
   const order = await CustomOrder.findById(id);
 
@@ -37,7 +41,7 @@ export const editCustomOrder = catchAsyncError(async (req, res, next) => {
   }
 
   try {
-    const updatedOrder = await CustomOrder.findByIdAndUpdate(id, orderData, {
+    const updatedOrder = await CustomOrder.findByIdAndUpdate(id, { ...orderData, photos: [...order?.photos, ...imageURLs] }, {
       new: true,
       runValidators: true,
       useFindAndModify: false,
@@ -49,11 +53,10 @@ export const editCustomOrder = catchAsyncError(async (req, res, next) => {
     });
 
   } catch (error) {
-    console.log(error, "error")
+    return next(new ErrorHandler(400, error.message));
   }
-
-
 });
+
 
 
 // Get all custom orders
@@ -283,7 +286,7 @@ export const getCustomOrderAmount = catchAsyncError(async (req, res, next) => {
 
   if (branchId) {
     completedOrdersQuery = {
-      deliveredAt: { $gte: startOfDayBangladesh, $lte: endDate },
+      deliveredAt: { $gte: startOfDayBangladesh, $lte: endOfDayBangladesh },
       branch: branchId,
     };
   } else {
