@@ -37,6 +37,7 @@ const customOrderSchema = new mongoose.Schema(
     orderId: {
       type: Number,
     },
+    photos: [{ type: String }],
     products: [
       {
         product: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },

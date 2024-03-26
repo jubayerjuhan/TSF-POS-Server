@@ -4,12 +4,17 @@ import CustomOrder from "../models/customOrder.js";
 import Branch from "../models/branchModel.js";
 import moment from "moment";
 import "moment-timezone";
+import { uploadImage, uploadImageArray } from "../utils/uploadImage/uploadImage.js";
 
 // creating custom order
 export const createCustomOrder = catchAsyncError(async (req, res, next) => {
   const orderData = req.body;
+  const photos = req.files;
 
-  const customOrder = new CustomOrder(orderData);
+  const imageURLs = await uploadImageArray(photos);
+
+
+  const customOrder = new CustomOrder({ ...orderData, photos: imageURLs });
   const savedOrder = await customOrder.save();
 
   res.status(201).json({
