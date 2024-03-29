@@ -146,9 +146,15 @@ export const updateCustomOrderStatus = catchAsyncError(
 
     if (status === "Shipped") {
       for (const productId of productIds) {
-        const product = factoryBranch?.products.find((pd) =>
+        const product = factoryBranch?.products.find((pd) => {
+          console.log(pd.id, productId.id, "pd.id, productId.id")
           pd.id.equals(productId.id)
+        }
         );
+
+        console.log(product, "product")
+
+
 
         if (!product) {
           return next(
