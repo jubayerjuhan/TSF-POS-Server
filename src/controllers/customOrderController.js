@@ -150,7 +150,7 @@ export const updateCustomOrderStatus = catchAsyncError(
           pd.id.equals(productId.id)
         );
 
-        if (!product || product.quantity < productId.quantity) {
+        if (!product) {
           return next(
             new ErrorHandler(400, "Insufficient Product Quantity Available...")
           );
