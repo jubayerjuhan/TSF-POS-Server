@@ -148,8 +148,7 @@ export const updateCustomOrderStatus = catchAsyncError(
       console.log(factoryBranch, "factoryBranch")
       for (const productId of productIds) {
         const product = factoryBranch?.products.find((pd) => {
-          console.log(pd.id, productId.id, "pd.id, productId.id")
-          pd.id.equals(productId.id)
+          return pd.id.equals(productId.id)
         }
         );
 
