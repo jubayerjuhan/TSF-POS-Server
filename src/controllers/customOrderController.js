@@ -121,7 +121,7 @@ export const updateCustomOrderStatus = catchAsyncError(
 
     const order = await CustomOrder.findById(id);
 
-    const factoryBranch = await Branch.findById(process.env.FACTORY_BRANCH_ID);
+    const factoryBranch = await Branch.findById("64c2a79301b47e1a34d4f7a8");
 
     if (!order) {
       return next(new ErrorHandler(404, "Custom Order not found"));
@@ -145,6 +145,7 @@ export const updateCustomOrderStatus = catchAsyncError(
     }
 
     if (status === "Shipped") {
+      console.log(factoryBranch, "factoryBranch")
       for (const productId of productIds) {
         const product = factoryBranch?.products.find((pd) => {
           console.log(pd.id, productId.id, "pd.id, productId.id")
