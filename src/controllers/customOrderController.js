@@ -121,7 +121,7 @@ export const updateCustomOrderStatus = catchAsyncError(
 
     const order = await CustomOrder.findById(id);
 
-    const factoryBranch = await Branch.findById("64c2a79301b47e1a34d4f7a8");
+    const factoryBranch = await Branch.findById(process.env.FACTORY_BRANCH_ID);
 
     if (!order) {
       return next(new ErrorHandler(404, "Custom Order not found"));
@@ -145,18 +145,13 @@ export const updateCustomOrderStatus = catchAsyncError(
     }
 
     if (status === "Shipped") {
-      console.log(factoryBranch, "factoryBranch")
       for (const productId of productIds) {
-        const product = factoryBranch?.products.find((pd) => {
-          return pd.id.equals(productId.id)
-        }
+        const product = factoryBranch.products.find((pd) =>
+          pd.id.equals(productId.id)
         );
 
-        console.log(product, "product")
-
-
-
-        if (!product) {
+        console.log(product, productId, "product and productId");
+        if (!product || product.quantity < productId.quantity) {
           return next(
             new ErrorHandler(400, "Insufficient Product Quantity Available...")
           );
