@@ -189,6 +189,7 @@ export const updateCustomOrderStatus = catchAsyncError(
     }
 
     if (status === "Shipped") {
+      console.log(order, "order...")
       order.products = productIds.map((productId) => ({
         product: productId.id,
         quantity: productId.quantity,
@@ -225,7 +226,7 @@ const moveTheProductToTheBranch = async (
   next
 ) => {
   // Find the branch document
-  const branch = await Branch.findOne({ _id: process.env.FACTORY_BRANCH_ID });
+  const branch = await Branch.findOne({ _id: "64c2a79301b47e1a34d4f7a8" });
 
   // Find the product within the branch's products array
   const product = branch.products.find(
@@ -241,7 +242,7 @@ const moveTheProductToTheBranch = async (
 
   // Subtract the product quantity from the branch product array
   await Branch.findOneAndUpdate(
-    { _id: process.env.FACTORY_BRANCH_ID, "products.id": productId },
+    { _id: "64c2a79301b47e1a34d4f7a8", "products.id": productId },
     { $inc: { "products.$.quantity": -quantity } },
     { new: true }
   );
