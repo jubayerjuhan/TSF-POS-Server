@@ -121,8 +121,8 @@ export const updateCustomOrderStatus = catchAsyncError(
 
     const order = await CustomOrder.findById(id);
 
-    console.log(process.env.FACTORY_BRANCH_ID, "Factory Branch Id.....!!!!!!!!!!!!")
-    const factoryBranch = await Branch.findById(process.env.FACTORY_BRANCH_ID);
+    console.log("64c2a79301b47e1a34d4f7a8", "Factory Branch Id.....!!!!!!!!!!!!")
+    const factoryBranch = await Branch.findById("64c2a79301b47e1a34d4f7a8");
 
     console.log(order, "order")
     console.log(factoryBranch, "factory branch")
