@@ -228,8 +228,10 @@ const moveTheProductToTheBranch = async (
   // Find the branch document
   const branch = await Branch.findOne({ _id: "64c2a79301b47e1a34d4f7a8" });
 
+  console.log(branch, "branch....``````branch.....``````")
+
   // Find the product within the branch's products array
-  const product = branch.products.find(
+  const product = branch?.products.find(
     (product) => product.id.toString() === productId.toString()
   );
 
