@@ -156,7 +156,10 @@ export const updateCustomOrderStatus = catchAsyncError(
         );
 
         console.log(product, productId, "product and productId");
-        if (!product || product.quantity < productId.quantity) {
+        console.log(product?.quantity, productId.quantity, "product and productId quantity")
+        console.log(product.quantity < productId.quantity, "product.quantity < productId.quantity")
+
+        if (!product || (product.quantity < productId.quantity)) {
           return next(
             new ErrorHandler(400, "Insufficient Product Quantity Available...")
           );
